@@ -6,14 +6,22 @@ public class Portal : MonoBehaviour {
 	public RoomLoadController roomLoadController;
 	public string roomName;
 
-	void OnTrigger2DEnter (Collider2D col)
+	private bool isLoaded = false;
+
+	void OnTriggerEnter2D (Collider2D col)
 	{
 		if (col.tag == "Player") {
-			if (roomName == "roomLeft") {
-				Debug.Log ("roomLeft");
-			} else if(roomName == "roomRight"){
-				Debug.Log("roomRight");
+			if (!isLoaded) {
+				roomLoadController.AddRoom (roomName);
+				isLoaded=true;
 			}
+		}
+	}
+
+	void OnTriggerExit2D (Collider2D col)
+	{
+		if (col.tag == "Player") {
+			isLoaded=false;
 		}
 	}
 }
