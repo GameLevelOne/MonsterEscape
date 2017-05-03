@@ -73,6 +73,7 @@ public class Inventory : MonoBehaviour {
 	/// Highlight selected item
 	/// </summary>
 	void SelectItem(int index){
+		
 		highlightCursor = index;
 		highlight.GetComponent<RectTransform>().anchoredPosition = new Vector2(startX + (gapX * index),0);
 		highlight.enabled = true;
@@ -83,7 +84,7 @@ public class Inventory : MonoBehaviour {
 	/// </summary>
 	void DeselectItem(){
 		highlightCursor = -1;
-		highlight.enabled = false;
+		if(highlight.enabled) highlight.enabled = false;
 	}
 		
 	/// <summary>
@@ -101,6 +102,7 @@ public class Inventory : MonoBehaviour {
 	/// </summary>
 	/// <param name="index">Index.</param>
 	public void ItemOnPointerClick(int index){
+		print("ASDASD");
 		if(highlightCursor != index){
 			SelectItem(index);
 			highlightCursor = index;
