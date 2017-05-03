@@ -20,6 +20,16 @@ public class RoomLoader : MonoBehaviour {
 		StartCoroutine(AfterLoad(scene));
 	}
 
+	public void Unload (string roomName){
+		SceneManager.sceneUnloaded += SceneManager_sceneUnloaded;
+		SceneManager.UnloadSceneAsync(roomName);
+	}
+
+	void SceneManager_sceneUnloaded (Scene arg0)
+	{
+		SceneManager.sceneUnloaded -= SceneManager_sceneUnloaded;
+	}
+
 	IEnumerator AfterLoad (Scene scene)
 	{
 		while (scene.isLoaded == false) {
@@ -27,5 +37,6 @@ public class RoomLoader : MonoBehaviour {
 		}
 
 		Debug.Log("done");
+		Unload("RoomLeft");
 	}
 }
