@@ -1,0 +1,2 @@
+00-06 pas hide nya
+07-14 di loop sampai dia selesai hiding
