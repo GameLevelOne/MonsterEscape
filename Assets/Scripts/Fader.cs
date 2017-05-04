@@ -46,7 +46,7 @@ public class Fader : MonoBehaviour {
 			yield return null;
 		}
 
-		faderImage.gameObject.SetActive(false);
+		fadeTimer=0f;
 		if (fadeIn) {
 			if(OnFadeInFinished !=null)
 				OnFadeInFinished ();
