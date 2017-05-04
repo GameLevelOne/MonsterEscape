@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class SearchAbleInventory : Inventory {
 
@@ -10,6 +8,10 @@ public class SearchAbleInventory : Inventory {
 
 	protected override void InitInventory(){
 		UpdateInventory();
+	}
+
+	public void SetItems(ItemSO[] item){
+		items = item;
 	}
 
 }
