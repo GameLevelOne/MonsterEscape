@@ -9,7 +9,6 @@ public class PlatformCollider : MonoBehaviour {
 	public event PlatformColliderEvent OnPlatformExit;
 
 	void OnTriggerEnter2D(Collider2D other) {
-		Debug.Log ("Heeeeee???");
 		if (other.tag == "Platform")
 			if (OnPlatformEnter != null)
 				OnPlatformEnter ();
