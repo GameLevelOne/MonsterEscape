@@ -5,7 +5,6 @@ using UnityEngine;
 public class RoomLoadController : MonoBehaviour {
 	public RoomLoader roomLoader;
 	public Room roomPrefab;
-	public Fader fader;
 
 	private string roomName = "room";
 	private float xPos = 0f;
@@ -13,7 +12,6 @@ public class RoomLoadController : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		fader.FadeIn();
 		InitRoomObject(roomName+currStackPos.ToString(),currStackPos);
 		AddRoom("RoomRight");
 		//AddRoom("RoomLeft");

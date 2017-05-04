@@ -14,9 +14,17 @@ public class Fader : MonoBehaviour {
 
 	float fadeSpeed = 1f;
 	float fadeTimer = 0f;
-	
-	public void FadeIn (){
+
+	void Awake(){
 		faderImage = GetComponent<Image>();
+		faderImage.gameObject.SetActive(true);
+	}
+
+	void Start(){
+		FadeIn();
+	}
+
+	public void FadeIn (){
 		faderImage.gameObject.SetActive(true);
 		StartCoroutine(DoFade(true));
 	}
@@ -38,6 +46,7 @@ public class Fader : MonoBehaviour {
 			yield return null;
 		}
 
+		faderImage.gameObject.SetActive(false);
 		if (fadeIn) {
 			if(OnFadeInFinished !=null)
 				OnFadeInFinished ();

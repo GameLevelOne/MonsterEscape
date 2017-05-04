@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class RoomLoader : MonoBehaviour {
+	public Fader fader;
 	private bool readyToChangeScene = false;
 
 	private AsyncOperation asop;
@@ -53,7 +54,7 @@ public class RoomLoader : MonoBehaviour {
 		while (scene.isLoaded == false) {
 			yield return new WaitForEndOfFrame();
 		}
-
+		fader.FadeIn();
 		Debug.Log("done");
 		//Unload("RoomLeft");
 	}
