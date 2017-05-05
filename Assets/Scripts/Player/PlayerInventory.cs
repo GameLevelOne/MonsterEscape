@@ -21,8 +21,8 @@ public class PlayerInventory : Inventory {
 		UpdateInventory();
 	}
 
-	public override void Show(){ anim.SetBool("Show",true); }
-	public override void Hide(){ anim.SetBool("Show",false); }
+	public void Show(){ anim.SetBool("Show",true); }
+	public void Hide(){ anim.SetBool("Show",false); }
 
 	public void SetItem(ItemSO item){
 		for(int i = 0;i<items.Length;i++){

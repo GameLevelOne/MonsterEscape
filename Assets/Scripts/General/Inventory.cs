@@ -19,9 +19,6 @@ public class Inventory : MonoBehaviour {
 		}
 	}
 
-	public virtual void Show(){}
-	public virtual void Hide(){}
-
 	public ItemSO GetItem(int index){
 		return items[index];
 	}

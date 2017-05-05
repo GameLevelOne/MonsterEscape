@@ -2,6 +2,9 @@
 
 public class SearchAbleInventory : Inventory {
 
+	[HideInInspector]
+	public SearchAble searchable;
+
 	void Start(){
 		InitInventory();
 	}
@@ -14,4 +17,8 @@ public class SearchAbleInventory : Inventory {
 		items = item;
 	}
 
+	public void ButtonXOnClick(){
+		gameObject.SetActive(false);
+		searchable.EnablePlayerControl();
+	}
 }
