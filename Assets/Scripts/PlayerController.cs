@@ -15,8 +15,10 @@ public class PlayerController : MonoBehaviour {
 	{
 		if (Input.GetKey (KeyCode.A)) {
 			transform.Translate (Vector3.left * walkSpeed);
+			transform.localScale = new Vector3(-1,1,0);
 		} else if(Input.GetKey(KeyCode.D)){
 			transform.Translate(Vector3.right * walkSpeed);
+			transform.localScale = new Vector3(1,1,0);
 		}
 	}
 }

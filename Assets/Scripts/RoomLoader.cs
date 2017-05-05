@@ -8,10 +8,6 @@ public class RoomLoader : MonoBehaviour {
 
 	private AsyncOperation asop;
 
-	void Awake(){
-		DontDestroyOnLoad(this.gameObject);
-	}
-
 	void OnEnable(){
 		Fader.OnFadeOutFinished += ReadyToChangeScene;
 	}
@@ -26,11 +22,12 @@ public class RoomLoader : MonoBehaviour {
 		asop = SceneManager.LoadSceneAsync (roomName, LoadSceneMode.Single);
 		asop.allowSceneActivation = false;
 		StartCoroutine(LoadScene(asop));
+
 	}
 
 	void SceneManager_sceneLoaded (Scene scene, LoadSceneMode mode){
 		SceneManager.sceneLoaded -= SceneManager_sceneLoaded;
-		StartCoroutine(AfterLoad(scene));
+		//StartCoroutine(AfterLoad(scene));
 	}
 
 	public void Unload (string roomName){

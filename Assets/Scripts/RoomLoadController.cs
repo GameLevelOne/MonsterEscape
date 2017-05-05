@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class RoomLoadController : MonoBehaviour {
 	public RoomLoader roomLoader;
@@ -10,17 +11,29 @@ public class RoomLoadController : MonoBehaviour {
 	private float xPos = 0f;
 	private int currStackPos = 0;
 
-	// Use this for initialization
-	void Start () {
-		InitRoomObject(roomName+currStackPos.ToString(),currStackPos);
-		AddRoom("RoomRight");
-		//AddRoom("RoomLeft");
+	void Awake(){
+		roomLoader = Instantiate(roomLoader) as RoomLoader;
 	}
 
-	public void AddRoom (string roomName){
-		currStackPos=1;
-		InitRoomObject(roomName+currStackPos.ToString(),currStackPos);
-		roomLoader.Load(roomName);
+	// Use this for initialization
+	void Start () {
+		AddRooms();
+		//AddRoom("RoomLeft");
+
+	}
+
+	public void AddRooms ()
+	{
+		Scene scene = SceneManager.GetActiveScene ();
+
+		if (scene.name == RoomNames.RoomMiddle.ToString ()) {
+			roomLoader.Load (RoomNames.RoomLeft.ToString ());
+			roomLoader.Load (RoomNames.RoomRight.ToString ());
+		} else if (scene.name == RoomNames.RoomLeft.ToString ()) {
+			roomLoader.Load (RoomNames.RoomMiddle.ToString ());
+		} else if(scene.name == RoomNames.RoomRight.ToString()){
+			roomLoader.Load(RoomNames.RoomMiddle.ToString());
+		}
 	}
 
 	public void RemoveRoom (string roomName){

@@ -10,10 +10,6 @@ public class Portal : MonoBehaviour {
 
 	private bool isLoaded = false;
 
-	public delegate void SpawnPlayer();
-
-	public static event SpawnPlayer Spawn;
-
 	void OnTriggerEnter2D (Collider2D col)
 	{
 		if (col.tag == "Player") {
