@@ -17,10 +17,10 @@ public class SearchAble : Properties {
 	/// </summary>
 	void ShowSearchAbleInventory(){
 		//show Inventory UI
-		temp = Instantiate(searchAbleInventory) as GameObject;
-		temp.GetComponent<RectTransform>().SetParent(MainCanvas.Instance.transform);
-		temp.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
-		temp.GetComponent<RectTransform>().localScale = Vector2.one;
+//		temp = Instantiate(searchAbleInventory) as GameObject;
+//		temp.GetComponent<RectTransform>().SetParent(MainCanvas.Instance.transform);
+//		temp.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
+//		temp.GetComponent<RectTransform>().localScale = Vector2.one;
 	}
 
 	public void HideSearchAbleInventory(){
