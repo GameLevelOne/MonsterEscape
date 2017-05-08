@@ -19,6 +19,5 @@ public class SearchAbleInventory : Inventory {
 
 	public void ButtonXOnClick(){
 		gameObject.SetActive(false);
-		searchable.EnablePlayerControl();
 	}
 }

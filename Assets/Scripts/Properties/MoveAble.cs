@@ -1,10 +1,10 @@
 ﻿using UnityEngine.UI;
 using UnityEngine;
 
-public enum MoveAblePlayerPos{ LEFT, RIGHT }
+public enum PlayerMoveSide{ LEFT, RIGHT }
 
 public class MoveAble : Properties {
-	[HideInInspector] public MoveAblePlayerPos playerPullPos;
+	[HideInInspector] public PlayerMoveSide playerPullPos;
 	[HideInInspector] public Transform player;
 
 	float distance;
@@ -21,7 +21,7 @@ public class MoveAble : Properties {
 	void Update(){
 		if(isHolding){
 			if(player != null){
-				float tempX = playerPullPos == MoveAblePlayerPos.LEFT ? (player.position.x + distance) : (player.position.x - distance);
+				float tempX = playerPullPos == PlayerMoveSide.LEFT ? (player.position.x + distance) : (player.position.x - distance);
 				transform.position = new Vector3(tempX,player.position.y,player.position.z);
 			}
 		}
