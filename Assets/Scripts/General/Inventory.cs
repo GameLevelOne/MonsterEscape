@@ -2,9 +2,10 @@
 using UnityEngine;
 
 public class Inventory : MonoBehaviour {
-	public Image[] itemImages;
+	public ItemSO[] items = new ItemSO[5];
 
-	protected ItemSO[] items = new ItemSO[5];
+	[Header("Reference")]
+	public Image[] itemImages;
 
 	protected virtual void InitInventory(){}
 

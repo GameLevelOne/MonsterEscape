@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class MoveAbleTrigger : MonoBehaviour {	
-	public MoveAblePlayerPos pos;
+	public PlayerMoveSide pos;
 	MoveAble parent;
 	void Start(){
 		parent = transform.parent.GetComponent<MoveAble>();

@@ -61,6 +61,14 @@ public class Player : MonoBehaviour {
 					AnimChange (PlayerState.PLAYER_WALK, 0.5f + (Mathf.Abs (dir.horizontal.x) / 2));	
 				}
 				playerTransform.localPosition = curPos + (dir.horizontal * speed);
+			} else if(dir.vertical != Vector2.zero){
+				if (fallFlag) {
+					//Falling
+					AnimChange (PlayerState.PLAYER_FALL);
+				} else {
+					AnimChange (PlayerState.PLAYER_WALK, 0.5f + (Mathf.Abs (dir.vertical.x) / 2));	
+				}
+				playerTransform.localPosition = curPos + (dir.vertical * speed);
 			} else {
 				if (fallFlag) {
 					//Falling

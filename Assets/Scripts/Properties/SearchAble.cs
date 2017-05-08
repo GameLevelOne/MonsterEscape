@@ -4,11 +4,14 @@ using UnityEngine;
 public class SearchAble : Properties {
 	const int MAX_ITEM = 5;
 
+	[Header("Ko Elwin")]
 	public ItemSO[] items;
+
+	[Header("Reference")]
 	public GameObject searchAbleInventory;
 	public Transform Canvas;
+
 	GameObject tempInventory;
-	Player player;
 
 	void Start(){
 		InitInventory();
@@ -26,28 +29,15 @@ public class SearchAble : Properties {
 
 		tempInventory.SetActive(false);
 	}
-
-	//OnActionButton
-	void ShowSearchAbleInventory(){
+		
+	public void ShowSearchAbleInventory(){
 		tempInventory.SetActive(true);
-		//disable player control
+
 	}
 
-	public void EnablePlayerControl(){
-		//enable player control
+	void HideSearchAbleInventory(){
+		tempInventory.SetActive(false);
 	}
 
-	void OnTriggerEnter2D(Collider2D p){
-		if(p.tag == "Player"){
-			//register OnActionButton
-			player = p.GetComponent<Player>();
-		}
-	}
 
-	void OnTriggerExit2D(Collider2D p){
-		if(p.tag == "Player"){
-			//unregister event OnActionButton
-			player = null;
-		}
-	}
 }
