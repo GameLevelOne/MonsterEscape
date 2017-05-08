@@ -6,23 +6,10 @@ using UnityEngine.SceneManagement;
 public class RoomLoader : MonoBehaviour {
 	private bool readyToChangeScene = false;
 
-	private AsyncOperation asop;
-
-	void OnEnable(){
-		Fader.OnFadeOutFinished += ReadyToChangeScene;
-	}
-
-	void OnDisable(){
-		Fader.OnFadeOutFinished -= ReadyToChangeScene;
-	}
-
 	public void Load (string roomName){
 		SceneManager.sceneLoaded += SceneManager_sceneLoaded;
 		//SceneManager.LoadSceneAsync(roomName,LoadSceneMode.Single);
-		asop = SceneManager.LoadSceneAsync (roomName, LoadSceneMode.Single);
-		asop.allowSceneActivation = false;
-		StartCoroutine(LoadScene(asop));
-
+		SceneManager.LoadSceneAsync (roomName, LoadSceneMode.Additive);
 	}
 
 	void SceneManager_sceneLoaded (Scene scene, LoadSceneMode mode){
@@ -40,10 +27,6 @@ public class RoomLoader : MonoBehaviour {
 		SceneManager.sceneUnloaded -= SceneManager_sceneUnloaded;
 	}
 
-	void ReadyToChangeScene (){
-		asop.allowSceneActivation=true;
-	}
-
 	IEnumerator AfterLoad (Scene scene)
 	{
 		while (scene.isLoaded == false) {
@@ -52,12 +35,4 @@ public class RoomLoader : MonoBehaviour {
 		//Unload("RoomLeft");
 	}
 
-	IEnumerator LoadScene (AsyncOperation asop)
-	{
-
-		while (asop.progress < 0.9f) {
-			yield return null;
-		}
-
-	}
 }
