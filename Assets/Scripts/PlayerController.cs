@@ -10,7 +10,7 @@ public class PlayerController : MonoBehaviour {
 	RoomManager roomManager;
 	string faderTag = "Fader";
 	string roomManagerTag = "RoomManager";
-	RoomNames targetRoom;
+	RoomDataSO targetRoom;
 
 	// Use this for initialization
 	void Start () {

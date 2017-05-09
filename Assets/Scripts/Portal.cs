@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class Portal : MonoBehaviour {
-	public RoomNames targetRoom;
+	public RoomDataSO targetRoom;
 
 	private RoomManager roomManager;
 	private RoomLoader roomLoader;

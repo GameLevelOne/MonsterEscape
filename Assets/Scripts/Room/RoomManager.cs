@@ -17,15 +17,22 @@ public class RoomManager : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		Init();
+
 	}
 
 	void Init(){
-		roomLoader.Load(RoomNames.Room1);
-		roomLoader.Load(RoomNames.Room2);
-		currRoom = rooms[0];
-
+		currRoom = rooms[(int)RoomNames.Room6Temp];
+		roomLoader.Load(RoomNames.Room6Temp);
+		LoadAdjacentRooms(currRoom);
 		SetStackPos();
+	}
 
+	void LoadAdjacentRooms (RoomDataSO targetRoom){
+		for (int i = 0; i < targetRoom.adjacentRoomNames.Length; i++) {
+			if ( targetRoom.adjacentRoomNames [i] != currRoom.roomName && targetRoom.adjacentRoomNames [i] != RoomNames.NULL) {
+				roomLoader.Load(targetRoom.adjacentRoomNames[i]);
+			}
+		}
 	}
 
 	public void RemoveRoom (RoomNames roomName){
@@ -57,16 +64,26 @@ public class RoomManager : MonoBehaviour {
 
 		for (int i = 0; i < rooms.Length; i++) {
 			if (rooms [i].stackPos == 1) {
-				rooms[i].stackPos=2;
-			} 
+				rooms [i].stackPos = 2;
+			} else if (rooms [i].stackPos >= 2) {
+				rooms [i].stackPos = 0;
+			}
 		}
 
 		for (int i = 0; i < currRoom.adjacentRoomNames.Length; i++) {
-			rooms[(int)currRoom.adjacentRoomNames[i]].stackPos = 1;
+			if (currRoom.adjacentRoomNames [i] != RoomNames.NULL)
+				rooms [(int)currRoom.adjacentRoomNames [i]].stackPos = 1;
+		}
+
+		if (currRoom.roomName == RoomNames.Room12) {
+			rooms[(int)RoomNames.Room7Temp].stackPos=2;
+		}
+		if (currRoom.roomName == RoomNames.Room2) {
+			rooms[(int)RoomNames.Room11].stackPos=2;
 		}
 	}
 
-	public void ChangeScene (RoomNames targetRoom)
+	public void ChangeScene (RoomDataSO targetRoom)
 	{
 //		if (targetRoom == RoomNames.RoomLeft) {
 //			SetStackPos (0);
@@ -82,18 +99,13 @@ public class RoomManager : MonoBehaviour {
 //		} else if (targetRoom == RoomNames.RoomRight) {
 //			SetStackPos(2);
 //		}
-
-		for (int i = 0; i < currRoom.adjacentRoomNames.Length; i++) {
-			if (currRoom.roomName != currRoom.adjacentRoomNames [i]) {
-				roomLoader.Load(currRoom.adjacentRoomNames[i]);
-			}
-		}
-
-		currRoom = rooms[(int)targetRoom];
+		LoadAdjacentRooms(targetRoom);
+		currRoom = targetRoom;
 		SetStackPos();
 		CheckUnload();
-		Camera.main.transform.localPosition = rooms[(int)targetRoom].cameraPos;
-		playerObj.transform.localPosition = rooms[(int)targetRoom].playerSpawnPos;
+
+		Camera.main.transform.localPosition = currRoom.cameraPos;
+		playerObj.transform.localPosition = currRoom.playerSpawnPos;
 		fader.FadeIn();
 	}
 }
