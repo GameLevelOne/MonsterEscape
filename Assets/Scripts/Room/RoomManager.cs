@@ -4,14 +4,13 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class RoomManager : MonoBehaviour {
-	public GameObject[] sceneObjects;
+	public RoomDataSO[] rooms;
 
 	public RoomLoader roomLoader;
 	public GameObject playerObj;
 	public Fader fader;
 
-	//private GameObject currSceneObj;
-	private string roomName = "room";
+	private RoomDataSO currRoom;
 	private float xPos = 0f;
 	private int currStackPos = 0;
 
@@ -21,61 +20,80 @@ public class RoomManager : MonoBehaviour {
 	}
 
 	void Init(){
-		roomLoader.Load(RoomNames.RoomMiddle.ToString());
-		roomLoader.Load(RoomNames.RoomLeft.ToString());
-		roomLoader.Load(RoomNames.RoomRight.ToString());
+		roomLoader.Load(RoomNames.Room1);
+		roomLoader.Load(RoomNames.Room2);
+		currRoom = rooms[0];
 
-		sceneObjects[0].GetComponent<RoomData>().stackPos=1;
-		sceneObjects[1].GetComponent<RoomData>().stackPos=0;
-		sceneObjects[2].GetComponent<RoomData>().stackPos=1;
+		SetStackPos();
+
 	}
 
-	public void RemoveRoom (string roomName){
+	public void RemoveRoom (RoomNames roomName){
 		roomLoader.Unload(roomName);
 	}
 
 	public void CheckUnload(){
-		for (int i = 0; i < sceneObjects.Length; i++) {
-			RoomData temp = sceneObjects [i].GetComponent<RoomData> ();
-			if (temp.stackPos == 2) {
-				roomLoader.Unload (temp.sceneName);
+		for (int i = 0; i < rooms.Length; i++) {
+			if (rooms[i].stackPos == 2) {
+				roomLoader.Unload (rooms[i].roomName);
 			}
-			Debug.Log("i="+i+", stackPos:"+temp.stackPos);
 		}
 	}
 
-	public void SetStackPos(int currSceneIdx){
-		for (int i = 0; i < sceneObjects.Length; i++) {
-			RoomData temp = sceneObjects [i].GetComponent<RoomData> ();
-			if (i != currSceneIdx) {
-				if (temp.stackPos < 2)
-					temp.stackPos++;
-				else
-					temp.stackPos = 2;
-			} else {
-				temp.stackPos = 0;
-			}
+	public void SetStackPos ()
+	{
+//		for (int i = 0; i < rooms.Length; i++) {
+//			if (i != currSceneIdx) {
+//				if (rooms [i].stackPos < 2)
+//					rooms [i].stackPos++;
+//				else
+//					rooms [i].stackPos = 2;
+//			} else {
+//				rooms [i].stackPos = 0;
+//			}
+//		}
+
+		currRoom.stackPos = 0;
+
+		for (int i = 0; i < rooms.Length; i++) {
+			if (rooms [i].stackPos == 1) {
+				rooms[i].stackPos=2;
+			} 
+		}
+
+		for (int i = 0; i < currRoom.adjacentRoomNames.Length; i++) {
+			rooms[(int)currRoom.adjacentRoomNames[i]].stackPos = 1;
 		}
 	}
 
 	public void ChangeScene (RoomNames targetRoom)
 	{
-		if (targetRoom == RoomNames.RoomLeft) {
-			SetStackPos (0);
-		} else if (targetRoom == RoomNames.RoomMiddle) {
-			SetStackPos (1);
-			if (sceneObjects [(int)RoomNames.RoomLeft].GetComponent<RoomData> ().stackPos == 2) {
-				roomLoader.Load (RoomNames.RoomLeft.ToString ());
-			} else if (sceneObjects [(int)RoomNames.RoomRight].GetComponent<RoomData> ().stackPos == 2) {
-				roomLoader.Load(RoomNames.RoomRight.ToString());
-			}
+//		if (targetRoom == RoomNames.RoomLeft) {
+//			SetStackPos (0);
+//		} else if (targetRoom == RoomNames.RoomMiddle) {
+//			SetStackPos (1);
+//
+//			if (rooms [(int)RoomNames.RoomLeft].stackPos == 2) {
+//				roomLoader.Load (RoomNames.RoomLeft.ToString ());
+//			} else if (rooms [(int)RoomNames.RoomRight].stackPos == 2) {
+//				roomLoader.Load (RoomNames.RoomRight.ToString ());
+//			}
+//
+//		} else if (targetRoom == RoomNames.RoomRight) {
+//			SetStackPos(2);
+//		}
 
-		} else if (targetRoom == RoomNames.RoomRight) {
-			SetStackPos(2);
+		for (int i = 0; i < currRoom.adjacentRoomNames.Length; i++) {
+			if (currRoom.roomName != currRoom.adjacentRoomNames [i]) {
+				roomLoader.Load(currRoom.adjacentRoomNames[i]);
+			}
 		}
+
+		currRoom = rooms[(int)targetRoom];
+		SetStackPos();
 		CheckUnload();
-		Camera.main.transform.localPosition = sceneObjects [(int)targetRoom].GetComponent<RoomData> ().cameraPos;
-		playerObj.transform.localPosition = sceneObjects [(int)targetRoom].GetComponent<RoomData> ().playerSpawnPos;
+		Camera.main.transform.localPosition = rooms[(int)targetRoom].cameraPos;
+		playerObj.transform.localPosition = rooms[(int)targetRoom].playerSpawnPos;
 		fader.FadeIn();
 	}
 }
