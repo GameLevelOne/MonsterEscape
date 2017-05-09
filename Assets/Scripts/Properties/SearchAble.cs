@@ -1,41 +1,43 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine.UI;
+using UnityEngine;
 
 public class SearchAble : Properties {
 	const int MAX_ITEM = 5;
 
+	[Header("Ko Elwin")]
 	public ItemSO[] items;
+
+	[Header("Reference")]
 	public GameObject searchAbleInventory;
-	GameObject temp;
+	public Transform Canvas;
+
+	GameObject tempInventory;
 
 	void Start(){
-		searchAbleInventory.GetComponent<SearchAbleInventory>().SetItems(items);
+		InitInventory();
 	}
 
-	/// <summary>
-	/// Register this method to player action event.
-	/// </summary>
-	void ShowSearchAbleInventory(){
-		//show Inventory UI
-		temp = Instantiate(searchAbleInventory) as GameObject;
-		temp.GetComponent<RectTransform>().SetParent(MainCanvas.Instance.transform);
-		temp.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
-		temp.GetComponent<RectTransform>().localScale = Vector2.one;
+	void InitInventory(){
+		tempInventory = Instantiate(searchAbleInventory) as GameObject;
+
+		tempInventory.GetComponent<RectTransform>().SetParent(Canvas);
+		tempInventory.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
+		tempInventory.GetComponent<RectTransform>().localScale = Vector2.one;
+
+		tempInventory.GetComponent<SearchAbleInventory>().SetItems(items);
+		tempInventory.GetComponent<SearchAbleInventory>().searchable = this;
+
+		tempInventory.SetActive(false);
+	}
+		
+	public void ShowSearchAbleInventory(){
+		tempInventory.SetActive(true);
+
 	}
 
-	public void HideSearchAbleInventory(){
-		Destroy(temp.gameObject);
+	void HideSearchAbleInventory(){
+		tempInventory.SetActive(false);
 	}
 
-	void OnTriggerEnter2D(Collider2D p){
-		if(p.tag == "Player"){
-			//register OnActionButton
-		}
-	}
 
-	void OnTriggerExit2D(Collider2D p){
-		if(p.tag == "Player"){
-			//unregister event OnActionButton
-		}
-	}
 }
