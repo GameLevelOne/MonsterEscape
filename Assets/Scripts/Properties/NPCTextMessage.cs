@@ -7,6 +7,10 @@ public class NPCTextMessage : MonoBehaviour {
 	public float typingSpeed;
 	string tempMessage;
 
+	void Awake(){
+		Hide();
+	}
+
 	public void Show(string message, string name){
 		gameObject.SetActive(true);
 		tempMessage = message;

@@ -6,10 +6,10 @@ using UnityEngine.SceneManagement;
 public class RoomLoader : MonoBehaviour {
 	private bool readyToChangeScene = false;
 
-	public void Load (string roomName){
+	public void Load (RoomNames roomName){
 		SceneManager.sceneLoaded += SceneManager_sceneLoaded;
 		//SceneManager.LoadSceneAsync(roomName,LoadSceneMode.Single);
-		SceneManager.LoadSceneAsync (roomName, LoadSceneMode.Additive);
+		SceneManager.LoadSceneAsync (roomName.ToString(), LoadSceneMode.Additive);
 	}
 
 	void SceneManager_sceneLoaded (Scene scene, LoadSceneMode mode){
@@ -17,9 +17,9 @@ public class RoomLoader : MonoBehaviour {
 		//StartCoroutine(AfterLoad(scene));
 	}
 
-	public void Unload (string roomName){
+	public void Unload (RoomNames roomName){
 		SceneManager.sceneUnloaded += SceneManager_sceneUnloaded;
-		SceneManager.UnloadSceneAsync(roomName);
+		SceneManager.UnloadSceneAsync(roomName.ToString());
 	}
 
 	void SceneManager_sceneUnloaded (Scene arg0)

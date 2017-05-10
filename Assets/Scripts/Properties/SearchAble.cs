@@ -11,13 +11,13 @@ public class SearchAble : Properties {
 	public GameObject searchAbleInventory;
 	public Transform Canvas;
 
-	GameObject tempInventory;
+	protected GameObject tempInventory;
 
-	void Start(){
-		InitInventory();
+	protected void Start(){
+		//InitInventory();
 	}
 
-	void InitInventory(){
+	protected void InitInventory(){
 		tempInventory = Instantiate(searchAbleInventory) as GameObject;
 
 		tempInventory.GetComponent<RectTransform>().SetParent(Canvas);
@@ -35,7 +35,7 @@ public class SearchAble : Properties {
 
 	}
 
-	void HideSearchAbleInventory(){
+	protected void HideSearchAbleInventory(){
 		tempInventory.SetActive(false);
 	}
 

@@ -10,7 +10,8 @@ public class PlayerController : MonoBehaviour {
 	RoomManager roomManager;
 	string faderTag = "Fader";
 	string roomManagerTag = "RoomManager";
-	RoomNames targetRoom;
+	RoomDataSO targetRoom;
+	PortalType targetPortal;
 
 	// Use this for initialization
 	void Start () {
@@ -40,7 +41,7 @@ public class PlayerController : MonoBehaviour {
 
 	void ReadyToChangeScene (){
 		isLoaded=false;
-		roomManager.ChangeScene(targetRoom);
+		roomManager.ChangeScene(targetRoom,targetPortal);
 	}
 
 	void OnTriggerEnter2D (Collider2D col)
@@ -50,6 +51,7 @@ public class PlayerController : MonoBehaviour {
 				//roomLoadController.AddRoom (roomName);
 				//Spawn();
 				targetRoom = col.GetComponent<Portal>().targetRoom;
+				targetPortal = col.GetComponent<Portal>().portalType;
 				fader.FadeOut();
 				isLoaded=true;
 			}
