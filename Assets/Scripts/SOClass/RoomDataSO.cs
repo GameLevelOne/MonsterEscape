@@ -12,7 +12,7 @@ public class RoomDataSO : ScriptableObject {
 	public int stackPos = 0;
 	public RoomNames[] adjacentRoomNames = new RoomNames[4]; //clockwise starts from right
 	public RoomNames roomName;
+	public Vector3[] playerSpawnPos = new Vector3[4];
 	public Vector3 cameraPos;
-	public Vector3 playerSpawnPos;
 
 }
