@@ -10,7 +10,7 @@ public class MonsterRangeAttack : MonoBehaviour {
 
 	void OnTriggerEnter2D(Collider2D p){
 		if(p.tag == "Player"){
-			monster.SetAnimState(AnimState.ATTACK);
+			monster.SetAnimState(MonsterAnimState.ATTACK);
 		}
 	}
 }

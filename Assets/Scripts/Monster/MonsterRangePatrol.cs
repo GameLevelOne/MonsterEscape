@@ -10,15 +10,16 @@ public class MonsterRangePatrol : MonoBehaviour {
 
 	void OnTriggerEnter2D(Collider2D p){
 		if(p.tag == "Player"){
-			monster.SetAnimState(AnimState.RUN);
+			monster.SetAnimState(MonsterAnimState.RUN);
 			GetComponent<CircleCollider2D>().radius = 10;
 		}
 	}
 
+
 	void OnTriggerExit2D(Collider2D p){
 		if(p.tag == "Player"){
-			if(monster.State == AnimState.RUN){
-				monster.SetAnimState(AnimState.CONFUSED);
+			if(monster.State == MonsterAnimState.RUN){
+				monster.SetAnimState(MonsterAnimState.CONFUSED);
 				GetComponent<CircleCollider2D>().radius = 7;
 			}
 		}

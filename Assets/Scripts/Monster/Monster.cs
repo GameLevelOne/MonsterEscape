@@ -2,13 +2,30 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum AnimState{	IDLE, RUN, WALK, ATTACK, CONFUSED, DAMAGED }
+public enum MonsterAnimState {	
+	IDLE, 
+	RUN, 
+	WALK, 
+	ATTACK, 
+	CONFUSED, 
+	DAMAGED 
+}
+public enum MonsterState {	
+	IDLE, 
+	PATROL, 
+	RETURN, 
+	AWARE, 
+	CAREFUL, 
+	CHASE,
+	SEARCH,
+	ATTACK
+}
 
 public class Monster : MonoBehaviour {
 	enum Direction{LEFT, RIGHT}
 	Direction direction;
 
-	AnimState state;
+	MonsterAnimState state;
 	Animator anim;
 
 	Transform player;
@@ -26,26 +43,21 @@ public class Monster : MonoBehaviour {
 	bool idling;
 
 	void Start(){
-		InitMonster();
-	}
-
-	void InitMonster(){
 		anim = GetComponent<Animator>();
-		state = AnimState.IDLE;
+		state = MonsterAnimState.IDLE;
 		current = 0;
 		tIdle = 0f;
 		walkSpeed = speed;
 		RunSpeed = speed * 3;
-		state = AnimState.WALK;
+		state = MonsterAnimState.WALK;
 		idling = false;
-
 	}
 
-	public AnimState State{
+	public MonsterAnimState State{
 		get{ return this.state; }
 	}
 
-	public void SetAnimState(AnimState state){
+	public void SetAnimState(MonsterAnimState state){
 		this.state = state;
 		anim.SetInteger("AnimState",(int)this.state);
 	}
@@ -56,23 +68,23 @@ public class Monster : MonoBehaviour {
 
 	IEnumerator ToIdle(){
 		yield return new WaitForSeconds(2f);
-		state = AnimState.IDLE;
+		state = MonsterAnimState.IDLE;
 		anim.SetInteger("AnimState",(int)state);
 	}
 
 	void Update(){
-		if(state == AnimState.IDLE){
+		if(state == MonsterAnimState.IDLE){
 			if(idling == false){
 				idling = true;
 				StartCoroutine(Idle());
 			}
 		}
-		if(state == AnimState.WALK){
+		if(state == MonsterAnimState.WALK){
 			if(Mathf.Abs(transform.position.x - Waypoints[current].transform.position.x) >= 0.1f){
 				speed = walkSpeed;
 				MoveToDestination(Waypoints[current].transform);
 			}else{
-				if(state != AnimState.IDLE) SetAnimState(AnimState.IDLE);
+				if(state != MonsterAnimState.IDLE) SetAnimState(MonsterAnimState.IDLE);
 			}
 		}
 	}
@@ -81,7 +93,7 @@ public class Monster : MonoBehaviour {
 		yield return new WaitForSeconds(2.5f);
 		current++;
 		if(current == Waypoints.Length) current = 0;
-		SetAnimState(AnimState.WALK);
+		SetAnimState(MonsterAnimState.WALK);
 		idling = false;
 
 	}
