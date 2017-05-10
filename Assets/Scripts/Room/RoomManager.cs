@@ -83,7 +83,7 @@ public class RoomManager : MonoBehaviour {
 		}
 	}
 
-	public void ChangeScene (RoomDataSO targetRoom)
+	public void ChangeScene (RoomDataSO targetRoom,PortalType targetPortal)
 	{
 //		if (targetRoom == RoomNames.RoomLeft) {
 //			SetStackPos (0);
@@ -105,7 +105,7 @@ public class RoomManager : MonoBehaviour {
 		CheckUnload();
 
 		Camera.main.transform.localPosition = currRoom.cameraPos;
-		playerObj.transform.localPosition = currRoom.playerSpawnPos;
+		playerObj.transform.localPosition = currRoom.playerSpawnPos[(int)targetPortal];
 		fader.FadeIn();
 	}
 }
