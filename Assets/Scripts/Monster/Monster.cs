@@ -29,19 +29,29 @@ public class Monster : MonoBehaviour {
 
 	const float PATROL_SPEED = 5f;
 	const float SEARCH_SPEED = 7.5f;
-	const float RUN_SPEED = 10f;
+	const float RUN_SPEED = 15f;
 
 	public MonsterState currentState;
 	public Transform[] monsterWaypoint;
 	public int currentWaypoint = 0;
+	public TriggerCollider leftSight;
+	public TriggerCollider rightSight;
+	Player playerTarget;
 	Vector3 searchLocation;
 	Vector3 startPosition;
+	Vector3 playerLocation;
 
 	void Start() {
 		monsterAnim = GetComponent<Animator> ();
 		monsterSprite = GetComponent<SpriteRenderer> ();
 		startPosition = transform.position;
 
+		leftSight.OnTriggerEnter += OnPlayerSighted;
+		rightSight.OnTriggerEnter += OnPlayerSighted;
+		leftSight.OnTriggerExit += OnPlayerHidden;
+		rightSight.OnTriggerExit += OnPlayerHidden;
+
+		SetDirection (transform.position);
 		CheckPatrol ();
 	}
 	void CheckPatrol() {
@@ -75,6 +85,19 @@ public class Monster : MonoBehaviour {
 			if (IsArrived (startPosition)) {
 				CheckPatrol ();
 			}
+		} else if (currentState == MonsterState.CHASE) {
+			AnimChange (MonsterAnimState.RUN);
+			if (playerTarget != null) {
+				MoveToDestination (playerTarget.transform.position,RUN_SPEED);
+				if (IsArrived (playerTarget.transform.position)) {
+					GetConfused ();
+				}
+			} else {
+				MoveToDestination (playerLocation,RUN_SPEED);
+				if (IsArrived (playerLocation)) {
+					GetConfused ();
+				}
+			}
 		}
 	}
 
@@ -84,14 +107,14 @@ public class Monster : MonoBehaviour {
 
 	public void HearSomething(Vector3 hearLocation) {
 		searchLocation = hearLocation;
-		monsterSprite.flipX = GetDirection (searchLocation);
+		SetDirection (searchLocation);
 		currentState = MonsterState.AWARE;
 		AnimChange (MonsterAnimState.DAMAGED);
 		StartCoroutine (DelayToNextState(1f,MonsterState.CAREFUL));
 	}
 	void GetConfused() {
 		currentState = MonsterState.NOTFOUND;
-		AnimChange (MonsterAnimState.CONFUSED);
+		AnimChange (MonsterAnimState.CONFUSED,0.5f);
 		StartCoroutine (DelayToNextState(3f,MonsterState.RETURN));
 	}
 	IEnumerator DelayToNextState(float delay, MonsterState nextState) {
@@ -111,16 +134,21 @@ public class Monster : MonoBehaviour {
 	}
 
 	void MoveToDestination(Vector3 target, float speed = PATROL_SPEED){
-		monsterSprite.flipX = GetDirection(target);
+		SetDirection(target);
 
 		transform.position = Vector3.MoveTowards(transform.position,new Vector3(target.x,transform.position.y,transform.position.y),Time.deltaTime * speed);
 	}
 
-	bool GetDirection(Vector3 target){
-		if(transform.position.x > target.x) 
-			return false;
-		else 
-			return true;
+	void SetDirection(Vector3 target){
+		if (transform.position.x >= target.x) {
+			monsterSprite.flipX = false;
+			leftSight.gameObject.SetActive (true);
+			rightSight.gameObject.SetActive (false);
+		} else {
+			monsterSprite.flipX = true;
+			leftSight.gameObject.SetActive (false);
+			rightSight.gameObject.SetActive (true);
+		}
 	}	
 
 	bool IsArrived(Vector3 target) {
@@ -128,5 +156,38 @@ public class Monster : MonoBehaviour {
 			return true;
 		else
 			return false;
+	}
+
+	void OnPlayerSighted(GameObject other) {
+		playerTarget = other.GetComponent<Player>();
+		SetDirection (playerLocation);
+		if (currentState != MonsterState.CHASE) {
+			currentState = MonsterState.AWARE;
+			AnimChange (MonsterAnimState.DAMAGED);
+			StartCoroutine (DelayToNextState (1f, MonsterState.CHASE));
+		}
+	}
+	void OnPlayerHidden(GameObject other) {
+		playerLocation = other.transform.position;
+		playerTarget = null;
+		SetDirection (playerLocation);
+		if (currentState != MonsterState.CHASE) {
+			currentState = MonsterState.AWARE;
+			AnimChange (MonsterAnimState.DAMAGED);
+			StartCoroutine (DelayToNextState (1f, MonsterState.CHASE));
+		}
+	}
+
+	void OnCollisionEnter2D(Collision2D other) {
+		if (other.gameObject.tag == "Player") {
+			Debug.Log ("Game Over");
+		}
+	}
+
+	void OnDestroy() {
+		leftSight.OnTriggerEnter -= OnPlayerSighted;
+		rightSight.OnTriggerEnter -= OnPlayerSighted;
+		leftSight.OnTriggerExit -= OnPlayerHidden;
+		rightSight.OnTriggerExit -= OnPlayerHidden;
 	}
 }

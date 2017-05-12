@@ -24,10 +24,10 @@ public class Player : MonoBehaviour {
 	SpriteRenderer playerSprite;
 	Rigidbody2D playerRigidBody;
 
-	public PlatformCollider feetCollider;
-	public PlatformCollider ladderCollider;
-	public PlatformCollider upperCrawlCollider;
-	public PlatformCollider lowerCrawlCollider;
+	public TriggerCollider feetCollider;
+	public TriggerCollider ladderCollider;
+	public TriggerCollider upperCrawlCollider;
+	public TriggerCollider lowerCrawlCollider;
 
 	public Joystick joystick;
 
@@ -48,14 +48,14 @@ public class Player : MonoBehaviour {
 
 		dir = JoystickDirection.zero;
 		joystick.OnJoystickMove += OnDirChange;
-		feetCollider.OnPlatformEnter += OnFeetPlatformEnter;
-		feetCollider.OnPlatformExit += OnFeetPlatformExit;
-		ladderCollider.OnPlatformEnter += OnLadderEnter;
-		ladderCollider.OnPlatformExit += OnLadderExit;
-		upperCrawlCollider.OnPlatformEnter += OnUpperCrawlEnter;
-		upperCrawlCollider.OnPlatformExit += OnUpperCrawlExit;
-		lowerCrawlCollider.OnPlatformEnter += OnLowerCrawlEnter;
-		lowerCrawlCollider.OnPlatformExit += OnLowerCrawlExit;
+		feetCollider.OnTriggerEnter += OnFeetPlatformEnter;
+		feetCollider.OnTriggerExit += OnFeetPlatformExit;
+		ladderCollider.OnTriggerEnter += OnLadderEnter;
+		ladderCollider.OnTriggerExit += OnLadderExit;
+		upperCrawlCollider.OnTriggerEnter += OnUpperCrawlEnter;
+		upperCrawlCollider.OnTriggerExit += OnUpperCrawlExit;
+		lowerCrawlCollider.OnTriggerEnter += OnLowerCrawlEnter;
+		lowerCrawlCollider.OnTriggerExit += OnLowerCrawlExit;
 	}
 
 	void FixedUpdate () 
@@ -134,38 +134,38 @@ public class Player : MonoBehaviour {
 		dir = newDir;	
 	}
 
-	void OnFeetPlatformEnter()
+	void OnFeetPlatformEnter(GameObject other)
 	{
 		fallFlag = false;
 	}
-	void OnFeetPlatformExit()
+	void OnFeetPlatformExit(GameObject other)
 	{
 		fallFlag = true;
 	}
-	void OnLadderEnter()
+	void OnLadderEnter(GameObject other)
 	{
 		ladderFlag = true;
 	}
-	void OnLadderExit()
+	void OnLadderExit(GameObject other)
 	{
 		ladderFlag = false;
 	}
-	void OnUpperCrawlEnter()
+	void OnUpperCrawlEnter(GameObject other)
 	{
 		upperCrawlFlag = true;
 		CheckCrawl ();
 	}
-	void OnUpperCrawlExit()
+	void OnUpperCrawlExit(GameObject other)
 	{
 		upperCrawlFlag = false;
 		CheckCrawl ();
 	}
-	void OnLowerCrawlEnter()
+	void OnLowerCrawlEnter(GameObject other)
 	{
 		lowerCrawlFlag = true;
 		CheckCrawl ();
 	}
-	void OnLowerCrawlExit()
+	void OnLowerCrawlExit(GameObject other)
 	{
 		lowerCrawlFlag = false;
 		CheckCrawl ();
@@ -180,14 +180,14 @@ public class Player : MonoBehaviour {
 	void OnDestroy()
 	{
 		joystick.OnJoystickMove -= OnDirChange;
-		feetCollider.OnPlatformEnter -= OnFeetPlatformEnter;
-		feetCollider.OnPlatformExit -= OnFeetPlatformExit;
-		ladderCollider.OnPlatformEnter -= OnLadderEnter;
-		ladderCollider.OnPlatformExit -= OnLadderExit;
-		upperCrawlCollider.OnPlatformEnter -= OnUpperCrawlEnter;
-		upperCrawlCollider.OnPlatformExit -= OnUpperCrawlExit;
-		lowerCrawlCollider.OnPlatformEnter -= OnLowerCrawlEnter;
-		lowerCrawlCollider.OnPlatformExit -= OnLowerCrawlExit;
+		feetCollider.OnTriggerEnter -= OnFeetPlatformEnter;
+		feetCollider.OnTriggerExit -= OnFeetPlatformExit;
+		ladderCollider.OnTriggerEnter -= OnLadderEnter;
+		ladderCollider.OnTriggerExit -= OnLadderExit;
+		upperCrawlCollider.OnTriggerEnter -= OnUpperCrawlEnter;
+		upperCrawlCollider.OnTriggerExit -= OnUpperCrawlExit;
+		lowerCrawlCollider.OnTriggerEnter -= OnLowerCrawlEnter;
+		lowerCrawlCollider.OnTriggerExit -= OnLowerCrawlExit;
 	}
 
 	void AnimChange(PlayerState ps, float animSpeed = 1f)
