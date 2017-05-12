@@ -4,8 +4,8 @@ using UnityEngine;
 
 public enum MonsterAnimState {	
 	IDLE, 
-	RUN, 
 	WALK, 
+	RUN, 
 	ATTACK, 
 	CONFUSED, 
 	DAMAGED 
@@ -15,99 +15,118 @@ public enum MonsterState {
 	PATROL, 
 	RETURN, 
 	AWARE, 
-	CAREFUL, 
+	CAREFUL,
 	CHASE,
 	SEARCH,
+	NOTFOUND,
 	ATTACK
 }
 
 public class Monster : MonoBehaviour {
-	enum Direction{LEFT, RIGHT}
-	Direction direction;
 
-	MonsterAnimState state;
-	Animator anim;
+	Animator monsterAnim;
+	SpriteRenderer monsterSprite;
 
-	Transform player;
-	public Transform Player{
-		get{ return this.player; }
-		set{ this.player = value; }
+	const float PATROL_SPEED = 5f;
+	const float SEARCH_SPEED = 7.5f;
+	const float RUN_SPEED = 10f;
+
+	public MonsterState currentState;
+	public Transform[] monsterWaypoint;
+	public int currentWaypoint = 0;
+	Vector3 searchLocation;
+	Vector3 startPosition;
+
+	void Start() {
+		monsterAnim = GetComponent<Animator> ();
+		monsterSprite = GetComponent<SpriteRenderer> ();
+		startPosition = transform.position;
+
+		CheckPatrol ();
+	}
+	void CheckPatrol() {
+		if (monsterWaypoint.Length > 0)
+			currentState = MonsterState.PATROL;
+		else
+			currentState = MonsterState.IDLE;
 	}
 
-
-	public GameObject[] Waypoints;
-	public float speed;
-	float walkSpeed, RunSpeed;
-	float tIdle;
-	int current;
-	bool idling;
-
-	void Start(){
-		anim = GetComponent<Animator>();
-		state = MonsterAnimState.IDLE;
-		current = 0;
-		tIdle = 0f;
-		walkSpeed = speed;
-		RunSpeed = speed * 3;
-		state = MonsterAnimState.WALK;
-		idling = false;
+	void FixedUpdate() {
+		if (currentState == MonsterState.IDLE) {
+			AnimChange (MonsterAnimState.IDLE);
+		} else if (currentState == MonsterState.PATROL) {
+			AnimChange (MonsterAnimState.WALK);
+			MoveToDestination (monsterWaypoint [currentWaypoint].position);
+			if (IsArrived (monsterWaypoint [currentWaypoint].position)) {
+				currentWaypoint++;
+				if (currentWaypoint >= monsterWaypoint.Length) {
+					currentWaypoint = 0;
+				}
+			}
+		} else if (currentState == MonsterState.CAREFUL) {
+			AnimChange (MonsterAnimState.WALK);
+			MoveToDestination (searchLocation,SEARCH_SPEED);
+			if (IsArrived (searchLocation)) {
+				GetConfused ();
+			}
+		} else if (currentState == MonsterState.RETURN) {
+			AnimChange (MonsterAnimState.WALK);
+			MoveToDestination (startPosition,SEARCH_SPEED);
+			if (IsArrived (startPosition)) {
+				CheckPatrol ();
+			}
+		}
 	}
 
-	public MonsterAnimState State{
-		get{ return this.state; }
+	public void TestHear(GameObject g) {
+		HearSomething (g.transform.position);
 	}
 
-	public void SetAnimState(MonsterAnimState state){
-		this.state = state;
-		anim.SetInteger("AnimState",(int)this.state);
+	public void HearSomething(Vector3 hearLocation) {
+		searchLocation = hearLocation;
+		monsterSprite.flipX = GetDirection (searchLocation);
+		currentState = MonsterState.AWARE;
+		AnimChange (MonsterAnimState.DAMAGED);
+		StartCoroutine (DelayToNextState(1f,MonsterState.CAREFUL));
 	}
-
+	void GetConfused() {
+		currentState = MonsterState.NOTFOUND;
+		AnimChange (MonsterAnimState.CONFUSED);
+		StartCoroutine (DelayToNextState(3f,MonsterState.RETURN));
+	}
+	IEnumerator DelayToNextState(float delay, MonsterState nextState) {
+		yield return new WaitForSeconds (delay);
+		currentState = nextState;
+	}
+		
 	public void SetIdle(){
-		StartCoroutine(ToIdle());
+		AnimChange (MonsterAnimState.IDLE);
 	}
 
-	IEnumerator ToIdle(){
-		yield return new WaitForSeconds(2f);
-		state = MonsterAnimState.IDLE;
-		anim.SetInteger("AnimState",(int)state);
+	void AnimChange(MonsterAnimState ms, float animSpeed = 1f)
+	{
+		monsterAnim.enabled = true;
+		monsterAnim.SetInteger ("AnimState",(int)ms);
+		monsterAnim.speed = animSpeed;
 	}
 
-	void Update(){
-		if(state == MonsterAnimState.IDLE){
-			if(idling == false){
-				idling = true;
-				StartCoroutine(Idle());
-			}
-		}
-		if(state == MonsterAnimState.WALK){
-			if(Mathf.Abs(transform.position.x - Waypoints[current].transform.position.x) >= 0.1f){
-				speed = walkSpeed;
-				MoveToDestination(Waypoints[current].transform);
-			}else{
-				if(state != MonsterAnimState.IDLE) SetAnimState(MonsterAnimState.IDLE);
-			}
-		}
+	void MoveToDestination(Vector3 target, float speed = PATROL_SPEED){
+		monsterSprite.flipX = GetDirection(target);
+
+		transform.position = Vector3.MoveTowards(transform.position,new Vector3(target.x,transform.position.y,transform.position.y),Time.deltaTime * speed);
 	}
 
-	IEnumerator Idle(){
-		yield return new WaitForSeconds(2.5f);
-		current++;
-		if(current == Waypoints.Length) current = 0;
-		SetAnimState(MonsterAnimState.WALK);
-		idling = false;
+	bool GetDirection(Vector3 target){
+		if(transform.position.x > target.x) 
+			return false;
+		else 
+			return true;
+	}	
 
-	}
-
-	void MoveToDestination(Transform target){
-		direction = GetDirection(target);
-		if(direction == Direction.LEFT) GetComponent<SpriteRenderer>().flipX = false;
-		else GetComponent<SpriteRenderer>().flipX = true;
-
-		transform.position = Vector3.MoveTowards(transform.position,new Vector3(target.position.x,transform.position.y,target.position.z),Time.deltaTime * speed);
-	}
-
-	Direction GetDirection(Transform target){
-		if(transform.position.x > target.position.x) return Direction.LEFT;
-		else return Direction.RIGHT;
+	bool IsArrived(Vector3 target) {
+		if (((monsterSprite.flipX) && (transform.position.x >= target.x)) || ((!monsterSprite.flipX) && (transform.position.x <= target.x)))
+			return true;
+		else
+			return false;
 	}
 }
