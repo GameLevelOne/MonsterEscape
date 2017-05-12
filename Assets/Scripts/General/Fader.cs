@@ -50,6 +50,7 @@ public class Fader : MonoBehaviour {
 		if (fadeIn) {
 			if(OnFadeInFinished !=null)
 				OnFadeInFinished ();
+			gameObject.SetActive (false);
 		} else {
 			if(OnFadeOutFinished !=null)
 				OnFadeOutFinished();

@@ -13,7 +13,6 @@ public class TriggerCollider : MonoBehaviour {
 		if (other.tag == tagCheck)
 		if (OnTriggerEnter != null)
 			OnTriggerEnter (other.gameObject);
-//		Debug.Log (other.tag);
 	}
 	void OnTriggerExit2D(Collider2D other) {
 		if (other.tag == tagCheck)

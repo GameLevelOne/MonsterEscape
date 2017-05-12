@@ -58,7 +58,7 @@ public class Player : MonoBehaviour {
 		lowerCrawlCollider.OnTriggerExit += OnLowerCrawlExit;
 	}
 
-	void FixedUpdate () 
+	void Update () 
 	{
 		Vector2 curPos = playerTransform.localPosition;
 
@@ -80,7 +80,7 @@ public class Player : MonoBehaviour {
 					}						
 				}
 				if ((!fallFlag) || (!ladderFlag)) {
-					playerTransform.localPosition = curPos + (dir.horizontal * speed);
+					playerTransform.localPosition = curPos + (dir.horizontal * speed * Time.deltaTime);
 				}
 			} else {
 				if (fallFlag) {
@@ -108,11 +108,11 @@ public class Player : MonoBehaviour {
 				if (dir.vertical.y > 0f) {
 					AnimChange (PlayerState.PLAYER_CLIMB);
 					curPos = playerTransform.localPosition;
-					playerTransform.localPosition = curPos + (dir.vertical * speed);
+					playerTransform.localPosition = curPos + (dir.vertical * speed * Time.deltaTime);
 				} else if ((dir.vertical.y < 0f) && (fallFlag)) {
 					AnimChange (PlayerState.PLAYER_CLIMB);
 					curPos = playerTransform.localPosition;
-					playerTransform.localPosition = curPos + (dir.vertical * speed);
+					playerTransform.localPosition = curPos + (dir.vertical * speed * Time.deltaTime);
 				} else if (fallFlag) {
 					AnimChange (PlayerState.PLAYER_CLIMB);
 					playerAnim.enabled = false;
