@@ -4,12 +4,11 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public enum PortalType{
-	TopLeft,BottomLeft,TopRight,BottomRight
+	TopLeft,BottomLeft,TopRight,BottomRight,Other
 }
 
 public class Portal : MonoBehaviour {
 	public RoomDataSO targetRoom;
 	public PortalType portalType;
-
 
 }
