@@ -39,4 +39,20 @@ public class JoystickDirection {
 				return false;
 		}
 	}
+	public bool IsUp {
+		get {
+			if (direction.y > 0)
+				return true;
+			else
+				return false;
+		}
+	}
+	public bool IsDown {
+		get {
+			if (direction.y < 0)
+				return true;
+			else
+				return false;
+		}
+	}
 }
