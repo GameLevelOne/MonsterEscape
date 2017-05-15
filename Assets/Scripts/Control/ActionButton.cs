@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using TMPro;
+using UnityEngine.UI;
 
 public class ActionButton : EventTrigger {
 	public delegate void ActionEvent (PlayerState state);
 	public event ActionEvent OnActionDown;
 	public event ActionEvent OnActionUp;
 
-	TextMeshProUGUI actionText;
+	Text actionText;
 
 	PlayerState activeState;
 
@@ -17,7 +17,7 @@ public class ActionButton : EventTrigger {
 	void Start () {
 		gameObject.SetActive (false);	
 		activeState = PlayerState.PLAYER_IDLE;
-		actionText = transform.GetChild (0).GetComponent<TextMeshProUGUI> ();
+		actionText = transform.GetChild (0).GetComponent<Text> ();
 	}
 
 	public void Activate(PlayerState newState, string text) {
