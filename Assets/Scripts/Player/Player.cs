@@ -16,7 +16,8 @@ public enum PlayerState {
 	PLAYER_OPERATE,
 	PLAYER_HIDE,
 	PLAYER_DAMAGE,
-	PLAYER_PLANKFALL
+	PLAYER_PLANKFALL,
+	PLAYER_CLIMBPLATFORM
 }
 
 
@@ -32,6 +33,7 @@ public class Player : MonoBehaviour {
 	public TriggerCollider upperCrawlCollider;
 	public TriggerCollider lowerCrawlCollider;
 	public TriggerCollider lowerPlankCollider;
+	public TriggerCollider lowerClimbAbleCollider;
 
 	public Joystick joystick;
 	public ActionButton actionButton;
@@ -39,15 +41,19 @@ public class Player : MonoBehaviour {
 	public float speed = 10f;
 	float prevSpeed = 10f;
 	JoystickDirection dir;
-	public bool fallFlag = true;
+	bool fallFlag = true;
 	int fallStack;
 	bool ladderFlag = false;
-	public bool onPlankFlag = false;
-	public bool plankFallFlag = false;
+	bool onPlankFlag = false;
+	bool plankFallFlag = false;
 	public float plankThreshold;
-	public bool crawlFlag = false;
-	public bool upperCrawlFlag = false;
-	public bool lowerCrawlFlag = false;
+	bool crawlFlag = false;
+	bool upperCrawlFlag = false;
+	bool lowerCrawlFlag = false;
+	bool climbAbleFlag = false;
+	bool climbingFlag = false;
+	ClimbAble climbTrigger;
+
 	PlayerState playerAction = PlayerState.PLAYER_IDLE;
 
 	void Start () {
@@ -71,6 +77,8 @@ public class Player : MonoBehaviour {
 		actionButton.OnActionUp += OnActionUp;
 		lowerPlankCollider.OnTriggerEnter += OnLowerPlankEnter;
 		lowerPlankCollider.OnTriggerExit += OnLowerPlankExit;
+		lowerClimbAbleCollider.OnTriggerEnter += OnClimbAbleEnter;
+		lowerClimbAbleCollider.OnTriggerExit += OnClimbAbleExit;
 	}
 
 	public JoystickDirection playerDir {
@@ -89,6 +97,8 @@ public class Player : MonoBehaviour {
 				AnimChange (playerAction);
 			} else if (plankFallFlag) {
 				AnimChange (PlayerState.PLAYER_PLANKFALL);
+			} else if (climbingFlag) {
+				AnimChange (PlayerState.PLAYER_CLIMBPLATFORM);
 			} else {
 
 				//Walk Horizontally
@@ -145,8 +155,13 @@ public class Player : MonoBehaviour {
 						AnimChange (PlayerState.PLAYER_CLIMB);
 						playerAnim.enabled = false;
 					} 
+				} else if (climbAbleFlag){
+					playerRigidBody.constraints = RigidbodyConstraints2D.FreezePositionY | RigidbodyConstraints2D.FreezeRotation;
+					if (dir.vertical.y > 0f) {
+						climbingFlag = true;
+					} 
 				} else {
-//					playerRigidBody.constraints = RigidbodyConstraints2D.FreezeRotation;
+					playerRigidBody.constraints = RigidbodyConstraints2D.FreezeRotation;
 				}
 			}
 		}
@@ -156,7 +171,12 @@ public class Player : MonoBehaviour {
 	{
 		playerAction = state;
 	}
-
+		
+	void FinishClimb() {
+		climbingFlag = false;
+		climbTrigger.SetPlayerLocation (transform);
+		AnimChange (PlayerState.PLAYER_IDLE);
+	}
 
 	void OnDirChange(JoystickDirection newDir)
 	{
@@ -221,6 +241,16 @@ public class Player : MonoBehaviour {
 		if (fallStack<=0)
 			fallFlag = true;
 	}
+	void OnClimbAbleEnter(GameObject other)
+	{
+		climbAbleFlag = true;
+		climbTrigger = other.GetComponent<ClimbAble> ();
+	}
+	void OnClimbAbleExit(GameObject other)
+	{
+		climbAbleFlag = false;
+		climbTrigger = null;
+	}
 
 	void OnDestroy()
 	{
@@ -237,6 +267,8 @@ public class Player : MonoBehaviour {
 		lowerPlankCollider.OnTriggerExit -= OnLowerPlankExit;
 		actionButton.OnActionDown -= OnActionDown;
 		actionButton.OnActionUp -= OnActionUp;
+		lowerClimbAbleCollider.OnTriggerEnter -= OnClimbAbleEnter;
+		lowerClimbAbleCollider.OnTriggerExit -= OnClimbAbleExit;
 	}
 
 	void AnimChange(PlayerState ps, float animSpeed = 1f)
