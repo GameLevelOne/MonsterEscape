@@ -106,6 +106,8 @@ public class RoomManager : MonoBehaviour {
 
 		Camera.main.transform.localPosition = currRoom.cameraPos;
 		playerObj.transform.localPosition = currRoom.playerSpawnPos[(int)targetPortal];
+		playerObj.GetComponent<Player> ().SetPause (false);
+//		Debug.Log ("halooo");
 		fader.FadeIn();
 	}
 }

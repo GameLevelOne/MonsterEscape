@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
+using TMPro;
 
 public enum PlayerState {
 	PLAYER_IDLE,
@@ -30,8 +32,10 @@ public class Player : MonoBehaviour {
 	public TriggerCollider lowerCrawlCollider;
 
 	public Joystick joystick;
+	public ActionButton actionButton;
 
 	public float speed = 10f;
+	float prevSpeed = 10f;
 	JoystickDirection dir;
 	bool fallFlag = true;
 	bool ladderFlag = false;
@@ -56,76 +60,80 @@ public class Player : MonoBehaviour {
 		upperCrawlCollider.OnTriggerExit += OnUpperCrawlExit;
 		lowerCrawlCollider.OnTriggerEnter += OnLowerCrawlEnter;
 		lowerCrawlCollider.OnTriggerExit += OnLowerCrawlExit;
+		actionButton.OnActionDown += OnActionDown;
+		actionButton.OnActionUp += OnActionUp;
 	}
 
 	void Update () 
 	{
-		Vector2 curPos = playerTransform.localPosition;
+		if (speed > 0) {
+			Vector2 curPos = playerTransform.localPosition;
 
-		//Eat
-		if (playerAction >= PlayerState.PLAYER_EAT) {
-			AnimChange (playerAction);
-		} else {
-
-			//Walk Horizontally
-			if (dir.horizontal != Vector2.zero) {
-				if (fallFlag) {
-					//Falling
-					AnimChange (PlayerState.PLAYER_FALL);
-				} else {
-					if (crawlFlag) {
-						AnimChange (PlayerState.PLAYER_CRAWL, 0.5f + (Mathf.Abs (dir.horizontal.x) / 2));	
-					} else {
-						AnimChange (PlayerState.PLAYER_WALK, 0.5f + (Mathf.Abs (dir.horizontal.x) / 2));	
-					}						
-				}
-				if ((!fallFlag) || (!ladderFlag)) {
-					playerTransform.localPosition = curPos + (dir.horizontal * speed * Time.deltaTime);
-				}
+			//Eat
+			if (playerAction >= PlayerState.PLAYER_EAT) {
+				AnimChange (playerAction);
 			} else {
-				if (fallFlag) {
-					//Falling
-					AnimChange (PlayerState.PLAYER_FALL);
-				} else {
-					if (crawlFlag) {
-						AnimChange (PlayerState.PLAYER_CRAWL);	
-						playerAnim.enabled = false;
+
+				//Walk Horizontally
+				if (dir.horizontal != Vector2.zero) {
+					if (fallFlag) {
+						//Falling
+						AnimChange (PlayerState.PLAYER_FALL);
 					} else {
-						AnimChange (PlayerState.PLAYER_IDLE);	
+						if (crawlFlag) {
+							AnimChange (PlayerState.PLAYER_CRAWL, 0.5f + (Mathf.Abs (dir.horizontal.x) / 2));	
+						} else {
+							AnimChange (PlayerState.PLAYER_WALK, 0.5f + (Mathf.Abs (dir.horizontal.x) / 2));	
+						}						
+					}
+					if ((!fallFlag) || (!ladderFlag)) {
+						playerTransform.localPosition = curPos + (dir.horizontal * speed * Time.deltaTime);
+					}
+				} else {
+					if (fallFlag) {
+						//Falling
+						AnimChange (PlayerState.PLAYER_FALL);
+					} else {
+						if (crawlFlag) {
+							AnimChange (PlayerState.PLAYER_CRAWL);	
+							playerAnim.enabled = false;
+						} else {
+							AnimChange (PlayerState.PLAYER_IDLE);	
+						}
 					}
 				}
-			}
-			//Flip Facing
-			if (dir.IsLeft) {
-				playerSprite.flipX = true;
-			} else if (dir.IsRight) {
-				playerSprite.flipX = false;
-			}			
+				//Flip Facing
+				if (dir.IsLeft) {
+					playerSprite.flipX = true;
+				} else if (dir.IsRight) {
+					playerSprite.flipX = false;
+				}			
 
-			//Ladder
-			if (ladderFlag) {
-				playerRigidBody.constraints = RigidbodyConstraints2D.FreezePositionY | RigidbodyConstraints2D.FreezeRotation;
-				if (dir.vertical.y > 0f) {
-					AnimChange (PlayerState.PLAYER_CLIMB);
-					curPos = playerTransform.localPosition;
-					playerTransform.localPosition = curPos + (dir.vertical * speed * Time.deltaTime);
-				} else if ((dir.vertical.y < 0f) && (fallFlag)) {
-					AnimChange (PlayerState.PLAYER_CLIMB);
-					curPos = playerTransform.localPosition;
-					playerTransform.localPosition = curPos + (dir.vertical * speed * Time.deltaTime);
-				} else if (fallFlag) {
-					AnimChange (PlayerState.PLAYER_CLIMB);
-					playerAnim.enabled = false;
-				} 
-			} else {
-				playerRigidBody.constraints = RigidbodyConstraints2D.FreezeRotation;
+				//Ladder
+				if (ladderFlag) {
+					playerRigidBody.constraints = RigidbodyConstraints2D.FreezePositionY | RigidbodyConstraints2D.FreezeRotation;
+					if (dir.vertical.y > 0f) {
+						AnimChange (PlayerState.PLAYER_CLIMB);
+						curPos = playerTransform.localPosition;
+						playerTransform.localPosition = curPos + (dir.vertical * speed * Time.deltaTime);
+					} else if ((dir.vertical.y < 0f) && (fallFlag)) {
+						AnimChange (PlayerState.PLAYER_CLIMB);
+						curPos = playerTransform.localPosition;
+						playerTransform.localPosition = curPos + (dir.vertical * speed * Time.deltaTime);
+					} else if (fallFlag) {
+						AnimChange (PlayerState.PLAYER_CLIMB);
+						playerAnim.enabled = false;
+					} 
+				} else {
+					playerRigidBody.constraints = RigidbodyConstraints2D.FreezeRotation;
+				}
 			}
 		}
 	}
 
-	public void PlayerAction(int state)
+	public void PlayerAction(PlayerState state)
 	{
-		playerAction = (PlayerState)state;
+		playerAction = state;
 	}
 
 
@@ -188,6 +196,8 @@ public class Player : MonoBehaviour {
 		upperCrawlCollider.OnTriggerExit -= OnUpperCrawlExit;
 		lowerCrawlCollider.OnTriggerEnter -= OnLowerCrawlEnter;
 		lowerCrawlCollider.OnTriggerExit -= OnLowerCrawlExit;
+		actionButton.OnActionDown -= OnActionDown;
+		actionButton.OnActionUp -= OnActionUp;
 	}
 
 	void AnimChange(PlayerState ps, float animSpeed = 1f)
@@ -195,6 +205,39 @@ public class Player : MonoBehaviour {
 		playerAnim.enabled = true;
 		playerAnim.SetInteger ("AnimState",(int)ps);
 		playerAnim.speed = animSpeed;
+	}
+
+
+	public void SetPause(bool paused)
+	{
+		if (paused) {
+			prevSpeed = speed;
+			speed = 0;
+			playerAnim.enabled = false;
+		} else {
+			speed = prevSpeed;
+			playerAnim.enabled = true;
+		}
+	}
+
+
+	void OnTriggerEnter2D(Collider2D other) {
+		if (other.tag == "HideAble") {
+			actionButton.Activate(PlayerState.PLAYER_HIDE,"HIDE");
+		}
+	}
+	void OnTriggerExit2D(Collider2D other) {
+		if (other.tag == "HideAble") {
+			actionButton.Deactivate();
+		}
+	}
+
+
+	void OnActionDown(PlayerState state) {
+		PlayerAction (state);
+	}
+	void OnActionUp(PlayerState state) {
+		PlayerAction (PlayerState.PLAYER_IDLE);
 	}
 
 }

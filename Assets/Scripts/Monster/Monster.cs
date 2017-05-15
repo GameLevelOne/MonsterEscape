@@ -61,7 +61,7 @@ public class Monster : MonoBehaviour {
 			currentState = MonsterState.IDLE;
 	}
 
-	void FixedUpdate() {
+	void Update() {
 		if (currentState == MonsterState.IDLE) {
 			AnimChange (MonsterAnimState.IDLE);
 		} else if (currentState == MonsterState.PATROL) {

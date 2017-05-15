@@ -13,10 +13,11 @@ public class ChangeScene : MonoBehaviour {
 	RoomDataSO targetRoom;
 	PortalType targetPortal;
 	bool isLoaded=false;
+	Player player;
 
 	// Use this for initialization
 	void Start () {
-		
+		player = GetComponent<Player> ();
 	}
 
 	void OnEnable(){
@@ -42,6 +43,8 @@ public class ChangeScene : MonoBehaviour {
 				targetPortal = col.GetComponent<Portal> ().portalType;
 				fader.FadeOut ();
 				isLoaded = true;
+
+				player.SetPause (true);
 			}
 		} 
 	}
