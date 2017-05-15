@@ -15,7 +15,8 @@ public enum PlayerState {
 	PLAYER_CARRY,
 	PLAYER_OPERATE,
 	PLAYER_HIDE,
-	PLAYER_DAMAGE
+	PLAYER_DAMAGE,
+	PLAYER_PLANKFALL
 }
 
 
@@ -30,6 +31,7 @@ public class Player : MonoBehaviour {
 	public TriggerCollider ladderCollider;
 	public TriggerCollider upperCrawlCollider;
 	public TriggerCollider lowerCrawlCollider;
+	public TriggerCollider lowerPlankCollider;
 
 	public Joystick joystick;
 	public ActionButton actionButton;
@@ -37,9 +39,12 @@ public class Player : MonoBehaviour {
 	public float speed = 10f;
 	float prevSpeed = 10f;
 	JoystickDirection dir;
-	bool fallFlag = true;
+	public bool fallFlag = true;
 	int fallStack;
 	bool ladderFlag = false;
+	public bool onPlankFlag = false;
+	public bool plankFallFlag = false;
+	public float plankThreshold;
 	public bool crawlFlag = false;
 	public bool upperCrawlFlag = false;
 	public bool lowerCrawlFlag = false;
@@ -64,6 +69,8 @@ public class Player : MonoBehaviour {
 		lowerCrawlCollider.OnTriggerExit += OnLowerCrawlExit;
 		actionButton.OnActionDown += OnActionDown;
 		actionButton.OnActionUp += OnActionUp;
+		lowerPlankCollider.OnTriggerEnter += OnLowerPlankEnter;
+		lowerPlankCollider.OnTriggerExit += OnLowerPlankExit;
 	}
 
 	public JoystickDirection playerDir {
@@ -80,6 +87,8 @@ public class Player : MonoBehaviour {
 			//Eat
 			if (playerAction >= PlayerState.PLAYER_EAT) {
 				AnimChange (playerAction);
+			} else if (plankFallFlag) {
+				AnimChange (PlayerState.PLAYER_PLANKFALL);
 			} else {
 
 				//Walk Horizontally
@@ -91,7 +100,11 @@ public class Player : MonoBehaviour {
 						if (crawlFlag) {
 							AnimChange (PlayerState.PLAYER_CRAWL, 0.5f + (Mathf.Abs (dir.horizontal.x) / 2));	
 						} else {
-							AnimChange (PlayerState.PLAYER_WALK, 0.5f + (Mathf.Abs (dir.horizontal.x) / 2));	
+							if ((onPlankFlag) && (Mathf.Abs (dir.horizontal.x) >= plankThreshold)) {
+								plankFallFlag = true;
+							} else {
+								AnimChange (PlayerState.PLAYER_WALK, 0.5f + (Mathf.Abs (dir.horizontal.x) / 2));	
+							}
 						}						
 					}
 					if ((!fallFlag) || (!ladderFlag)) {
@@ -195,6 +208,19 @@ public class Player : MonoBehaviour {
 		else
 			crawlFlag = false;
 	}
+	void OnLowerPlankEnter(GameObject other)
+	{
+		onPlankFlag = true;
+		fallFlag = false;
+		fallStack++;
+	}
+	void OnLowerPlankExit(GameObject other)
+	{
+		onPlankFlag = false;
+		fallStack--;
+		if (fallStack<=0)
+			fallFlag = true;
+	}
 
 	void OnDestroy()
 	{
@@ -207,6 +233,8 @@ public class Player : MonoBehaviour {
 		upperCrawlCollider.OnTriggerExit -= OnUpperCrawlExit;
 		lowerCrawlCollider.OnTriggerEnter -= OnLowerCrawlEnter;
 		lowerCrawlCollider.OnTriggerExit -= OnLowerCrawlExit;
+		lowerPlankCollider.OnTriggerEnter -= OnLowerPlankEnter;
+		lowerPlankCollider.OnTriggerExit -= OnLowerPlankExit;
 		actionButton.OnActionDown -= OnActionDown;
 		actionButton.OnActionUp -= OnActionUp;
 	}
@@ -218,6 +246,9 @@ public class Player : MonoBehaviour {
 		playerAnim.speed = animSpeed;
 	}
 
+	void StandUp() {
+		plankFallFlag = false;
+	}
 
 	public void SetPause(bool paused)
 	{
