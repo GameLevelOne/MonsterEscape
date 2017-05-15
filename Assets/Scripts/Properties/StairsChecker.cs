@@ -6,7 +6,7 @@ public class StairsChecker : MonoBehaviour {
 
 	public bool leftSide;
 	public bool goingUp;
-	public PolygonCollider2D stairsBody;
+	public Stairs stairsBody;
 
 	void OnTriggerStay2D(Collider2D other) {
 		if (other.tag == "Player") {
@@ -23,9 +23,9 @@ public class StairsChecker : MonoBehaviour {
 			}
 			Debug.Log ("Condition: "+enableHorizontal+","+enableVertical);
 			if (enableHorizontal && enableVertical) {
-				stairsBody.enabled = true;
+				stairsBody.ActivateStairs(true);
 			} else {
-				stairsBody.enabled = false;
+				stairsBody.ActivateStairs(false);
 			}
 
 		}
