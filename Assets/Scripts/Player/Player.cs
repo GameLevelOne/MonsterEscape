@@ -38,6 +38,7 @@ public class Player : MonoBehaviour {
 	float prevSpeed = 10f;
 	JoystickDirection dir;
 	bool fallFlag = true;
+	int fallStack;
 	bool ladderFlag = false;
 	public bool crawlFlag = false;
 	public bool upperCrawlFlag = false;
@@ -51,6 +52,7 @@ public class Player : MonoBehaviour {
 		playerRigidBody = GetComponent<Rigidbody2D> ();
 
 		dir = JoystickDirection.zero;
+		fallStack = 0;
 		joystick.OnJoystickMove += OnDirChange;
 		feetCollider.OnTriggerEnter += OnFeetPlatformEnter;
 		feetCollider.OnTriggerExit += OnFeetPlatformExit;
@@ -62,6 +64,12 @@ public class Player : MonoBehaviour {
 		lowerCrawlCollider.OnTriggerExit += OnLowerCrawlExit;
 		actionButton.OnActionDown += OnActionDown;
 		actionButton.OnActionUp += OnActionUp;
+	}
+
+	public JoystickDirection playerDir {
+		get {
+			return dir;
+		}
 	}
 
 	void Update () 
@@ -125,7 +133,7 @@ public class Player : MonoBehaviour {
 						playerAnim.enabled = false;
 					} 
 				} else {
-					playerRigidBody.constraints = RigidbodyConstraints2D.FreezeRotation;
+//					playerRigidBody.constraints = RigidbodyConstraints2D.FreezeRotation;
 				}
 			}
 		}
@@ -145,10 +153,13 @@ public class Player : MonoBehaviour {
 	void OnFeetPlatformEnter(GameObject other)
 	{
 		fallFlag = false;
+		fallStack++;
 	}
 	void OnFeetPlatformExit(GameObject other)
 	{
-		fallFlag = true;
+		fallStack--;
+		if (fallStack<=0)
+			fallFlag = true;
 	}
 	void OnLadderEnter(GameObject other)
 	{
