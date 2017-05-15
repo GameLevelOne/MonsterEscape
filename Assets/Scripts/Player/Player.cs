@@ -293,15 +293,26 @@ public class Player : MonoBehaviour {
 			playerAnim.enabled = true;
 		}
 	}
-
-
+		
 	void OnTriggerEnter2D(Collider2D other) {
 		if (other.tag == "HideAble") {
 			actionButton.Activate(PlayerState.PLAYER_HIDE,"HIDE");
+		}else if(other.tag == "MoveAble"){
+			actionButton.Activate(PlayerState.PLAYER_CARRY,"CARRY");
+		}else if(other.tag == "SearchAble"){
+			actionButton.Activate(PlayerState.PLAYER_OPERATE,"SEARCH");
+		}else if(other.tag == "EnterAble"){
+			actionButton.Activate(PlayerState.PLAYER_IDLE,"ENTER");
+		}else if(other.tag == "NPC"){
+			actionButton.Activate(PlayerState.PLAYER_IDLE,"TALK");
 		}
 	}
 	void OnTriggerExit2D(Collider2D other) {
-		if (other.tag == "HideAble") {
+		if (other.tag == "HideAble" ||
+			other.tag == "MoveAble" ||
+			other.tag == "SearchAble"||
+			other.tag == "EnterAble"||
+			other.tag == "NPC") {
 			actionButton.Deactivate();
 		}
 	}
