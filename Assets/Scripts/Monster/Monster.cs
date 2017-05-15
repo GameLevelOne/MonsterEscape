@@ -8,7 +8,8 @@ public enum MonsterAnimState {
 	RUN, 
 	ATTACK, 
 	CONFUSED, 
-	DAMAGED 
+	DAMAGED,
+	SURPRISED
 }
 public enum MonsterState {	
 	IDLE, 
@@ -109,8 +110,8 @@ public class Monster : MonoBehaviour {
 		searchLocation = hearLocation;
 		SetDirection (searchLocation);
 		currentState = MonsterState.AWARE;
-		AnimChange (MonsterAnimState.DAMAGED);
-		StartCoroutine (DelayToNextState(1f,MonsterState.CAREFUL));
+		AnimChange (MonsterAnimState.SURPRISED);
+		StartCoroutine (DelayToNextState(1.5f,MonsterState.CAREFUL));
 	}
 	void GetConfused() {
 		currentState = MonsterState.NOTFOUND;
@@ -163,8 +164,8 @@ public class Monster : MonoBehaviour {
 		SetDirection (playerLocation);
 		if (currentState != MonsterState.CHASE) {
 			currentState = MonsterState.AWARE;
-			AnimChange (MonsterAnimState.DAMAGED);
-			StartCoroutine (DelayToNextState (1f, MonsterState.CHASE));
+			AnimChange (MonsterAnimState.SURPRISED);
+			StartCoroutine (DelayToNextState (1.5f, MonsterState.CHASE));
 		}
 	}
 	void OnPlayerHidden(GameObject other) {
@@ -173,8 +174,8 @@ public class Monster : MonoBehaviour {
 		SetDirection (playerLocation);
 		if (currentState != MonsterState.CHASE) {
 			currentState = MonsterState.AWARE;
-			AnimChange (MonsterAnimState.DAMAGED);
-			StartCoroutine (DelayToNextState (1f, MonsterState.CHASE));
+			AnimChange (MonsterAnimState.SURPRISED);
+			StartCoroutine (DelayToNextState (1.5f, MonsterState.CHASE));
 		}
 	}
 
