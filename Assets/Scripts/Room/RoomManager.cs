@@ -15,7 +15,6 @@ public class RoomManager : MonoBehaviour {
 	private RoomDataSO currRoom;
 	private float xPos = 0f;
 	private int currStackPos = 0;
-	private bool isGameOver=false;
 	private Vector3 playerInitPos = new Vector3(-4.6f,-0.08f,0);
 
 	void OnEnable(){
@@ -30,16 +29,6 @@ public class RoomManager : MonoBehaviour {
 
 	void Start () {
 		Init();
-	}
-
-	void Update ()
-	{
-		if (isGameOver) {
-			if (Input.GetMouseButtonDown (0)) {
-			Debug.Log("restart");
-				RestartGame();
-			}
-		}
 	}
 
 	void Init(){
@@ -60,31 +49,30 @@ public class RoomManager : MonoBehaviour {
 
 	void StartFadeOutGameOver (){
 		fader.FadeOutGameOver();
+	}
+
+	void AfterFadeOutGameOver(){
 		textGameOver.SetActive(true);
 		btnRestart.SetActive(true);
 		playerObj.GetComponent<Player> ().SetPause (true);
 	}
 
-	void AfterFadeOutGameOver(){
-		Debug.Log("asd");
-		isGameOver=true;
-	}
-
 	public void RestartGame ()
 	{
-		for (int i = 0; i < rooms.Length; i++) {
-			if (i != (int)RoomNames.Room6) {
-				rooms [i].stackPos = 2;
-			}
+		if (currRoom.roomName == RoomNames.Room8) {
+			roomLoader.Unload(RoomNames.Room7);
+			roomLoader.Unload(RoomNames.Room8);
+			roomLoader.Unload(RoomNames.Room9);
 		}
-
-
-		Init();
-		Camera.main.transform.localPosition = currRoom.cameraPos;
-		playerObj.transform.localPosition = playerInitPos;
-		playerObj.GetComponent<Player> ().SetPause (false);
-		textGameOver.SetActive(false);
-		btnRestart.SetActive(false);
+		fader.FadeIn();
+		SceneManager.LoadScene("RoomRoot");
+//		Init();
+//		Camera.main.transform.localPosition = currRoom.cameraPos;
+//		playerObj.transform.localPosition = playerInitPos;
+//		playerObj.GetComponent<Player> ().SetPause (false);
+//		textGameOver.SetActive(false);
+//		btnRestart.SetActive(false);
+//		playerObj.GetComponent<Player>().RestartPlayer();
 	}
 
 	public void RemoveRoom (RoomNames roomName){
