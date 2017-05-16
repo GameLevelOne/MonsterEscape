@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public enum RoomNames{
-	Room1,Room2,Room3,Room4,Room5,Room6,Room7,Room8,Room9,Room10,Room11,Room12,NULL
+	NULL=-1,Room1,Room2,Room3,Room4,Room5,Room6,Room7,Room8,Room9,Room10,Room11,Room12
 //	Room1,Room2,Room3,Room4,Room5,Room6Temp,Room7Temp,Room8,Room9,Room10,Room11,Room12,NULL // ->temp
 }
 
