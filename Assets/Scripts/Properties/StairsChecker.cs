@@ -10,6 +10,7 @@ public class StairsChecker : MonoBehaviour {
 
 	void OnTriggerStay2D(Collider2D other) {
 		if (other.tag == "Player") {
+			Debug.Log ("Other: "+other.name);
 			Player player = other.transform.parent.parent.GetComponent<Player> (); 
 			bool enableHorizontal = false;
 			if (((!leftSide) && (player.playerDir.IsRight))
@@ -21,11 +22,11 @@ public class StairsChecker : MonoBehaviour {
 				|| ((goingUp) && (player.playerDir.IsUp))) {
 				enableVertical = true;
 			}
-			Debug.Log ("Condition: "+enableHorizontal+","+enableVertical);
+//			Debug.Log ("Condition: "+enableHorizontal+","+enableVertical);
 			if (enableHorizontal && enableVertical) {
-				stairsBody.ActivateStairs(true);
+				stairsBody.ActivateStairs(true,player.lowerPlayerCollider);
 			} else {
-				stairsBody.ActivateStairs(false);
+				stairsBody.ActivateStairs(false,player.lowerPlayerCollider);
 			}
 
 		}

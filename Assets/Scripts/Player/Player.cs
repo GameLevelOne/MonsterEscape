@@ -34,6 +34,7 @@ public class Player : MonoBehaviour {
 	public TriggerCollider lowerPlankCollider;
 	public TriggerCollider lowerClimbAbleCollider;
 	public TriggerCollider EnterAbleCollider;
+	public BoxCollider2D lowerPlayerCollider;
 
 	public Joystick joystick;
 	public ActionButton actionButton;
@@ -328,13 +329,16 @@ public class Player : MonoBehaviour {
 			actionButton.Activate(PlayerState.PLAYER_OPERATE,"SEARCH");
 		}else if(other.tag == "NPC"){
 			actionButton.Activate(PlayerState.PLAYER_IDLE,"TALK");
+		}else if (other.tag == "NPCSearchAble"){
+			actionButton.Activate(PlayerState.PLAYER_OPERATE,"SEARCH");
 		}
 	}
 	void OnTriggerExit2D(Collider2D other) {
 		if (other.tag == "HideAble" ||
 			other.tag == "MoveAble" ||
 			other.tag == "SearchAble"||
-			other.tag == "NPC") {
+			other.tag == "NPC"		||
+			other.tag == "NPCSearchAble") {
 			actionButton.Deactivate();
 		}
 	}
