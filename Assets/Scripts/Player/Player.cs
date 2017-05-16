@@ -383,4 +383,7 @@ public class Player : MonoBehaviour {
 		PlayerAction (PlayerState.PLAYER_IDLE);
 	}
 
+	public void RestartPlayer(){
+		AnimChange(PlayerState.PLAYER_IDLE);
+	}
 }
