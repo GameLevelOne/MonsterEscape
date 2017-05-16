@@ -8,20 +8,42 @@ public class RoomManager : MonoBehaviour {
 
 	public RoomLoader roomLoader;
 	public GameObject playerObj;
+	public GameObject textGameOver;
+	public GameObject btnRestart;
 	public Fader fader;
 
 	private RoomDataSO currRoom;
 	private float xPos = 0f;
 	private int currStackPos = 0;
+	private bool isGameOver=false;
+	private Vector3 playerInitPos = new Vector3(-4.6f,-0.08f,0);
 
-	// Use this for initialization
+	void OnEnable(){
+		Monster.DoGameOver += StartFadeOutGameOver;
+		Fader.OnFadeOutGameOverFinished += AfterFadeOutGameOver;
+	}
+
+	void OnDisable (){
+		Monster.DoGameOver -= StartFadeOutGameOver;
+		Fader.OnFadeOutGameOverFinished -= AfterFadeOutGameOver;
+	}
+
 	void Start () {
 		Init();
+	}
 
+	void Update ()
+	{
+		if (isGameOver) {
+			if (Input.GetMouseButtonDown (0)) {
+			Debug.Log("restart");
+				RestartGame();
+			}
+		}
 	}
 
 	void Init(){
-		Debug.Log((int)RoomNames.Room6);
+		playerObj.transform.localPosition = playerInitPos;
 		currRoom = rooms[(int)RoomNames.Room6];
 		roomLoader.Load(currRoom.roomName);
 		LoadAdjacentRooms(currRoom);
@@ -34,6 +56,35 @@ public class RoomManager : MonoBehaviour {
 				roomLoader.Load(targetRoom.adjacentRoomNames[i]);
 			}
 		}
+	}
+
+	void StartFadeOutGameOver (){
+		fader.FadeOutGameOver();
+		textGameOver.SetActive(true);
+		btnRestart.SetActive(true);
+		playerObj.GetComponent<Player> ().SetPause (true);
+	}
+
+	void AfterFadeOutGameOver(){
+		Debug.Log("asd");
+		isGameOver=true;
+	}
+
+	public void RestartGame ()
+	{
+		for (int i = 0; i < rooms.Length; i++) {
+			if (i != (int)RoomNames.Room6) {
+				rooms [i].stackPos = 2;
+			}
+		}
+
+
+		Init();
+		Camera.main.transform.localPosition = currRoom.cameraPos;
+		playerObj.transform.localPosition = playerInitPos;
+		playerObj.GetComponent<Player> ().SetPause (false);
+		textGameOver.SetActive(false);
+		btnRestart.SetActive(false);
 	}
 
 	public void RemoveRoom (RoomNames roomName){
@@ -101,7 +152,6 @@ public class RoomManager : MonoBehaviour {
 		currRoom = targetRoom;
 		SetStackPos();
 		CheckUnload();
-
 		Camera.main.transform.localPosition = currRoom.cameraPos;
 		playerObj.transform.localPosition = currRoom.playerSpawnPos[(int)targetPortal];
 		playerObj.GetComponent<Player> ().SetPause (false);

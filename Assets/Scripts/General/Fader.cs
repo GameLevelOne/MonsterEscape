@@ -7,8 +7,10 @@ public class Fader : MonoBehaviour {
 
 	public delegate void FadeInFinished();
 	public delegate void FadeOutFinished();
+	public delegate void FadeOutGameOverFinished();
 	public static event FadeInFinished OnFadeInFinished;
 	public static event FadeOutFinished OnFadeOutFinished;
+	public static event FadeOutGameOverFinished OnFadeOutGameOverFinished;
 
 	Image faderImage;
 
@@ -34,6 +36,11 @@ public class Fader : MonoBehaviour {
 		StartCoroutine(DoFade(false));
 	}
 
+	public void FadeOutGameOver(){
+		faderImage.gameObject.SetActive(true);
+		StartCoroutine(DoFadeGameOver());
+	}
+
 	IEnumerator DoFade (bool fadeIn)
 	{
 		while (fadeTimer < 1f) {
@@ -55,5 +62,17 @@ public class Fader : MonoBehaviour {
 			if(OnFadeOutFinished !=null)
 				OnFadeOutFinished();
 		}
+	}
+
+	IEnumerator DoFadeGameOver ()
+	{
+		while (fadeTimer < 2f) {
+			fadeTimer += Time.deltaTime *fadeSpeed;
+			Color dim = new Color(0,0,0,0.5f);
+			faderImage.color = Color.Lerp (Color.clear, dim, fadeTimer);
+			yield return null;
+		}
+		fadeTimer=0f;
+		OnFadeOutGameOverFinished();
 	}
 }

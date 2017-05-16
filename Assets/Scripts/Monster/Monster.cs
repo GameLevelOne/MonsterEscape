@@ -28,19 +28,27 @@ public class Monster : MonoBehaviour {
 	Animator monsterAnim;
 	SpriteRenderer monsterSprite;
 
-	const float PATROL_SPEED = 5f;
-	const float SEARCH_SPEED = 7.5f;
-	const float RUN_SPEED = 15f;
+	//original values
+//	const float PATROL_SPEED = 5f;
+//	const float SEARCH_SPEED = 7.5f;
+//	const float RUN_SPEED = 15f;
+
+	const float PATROL_SPEED = 1f;
+	const float SEARCH_SPEED = 1.5f;
+	const float RUN_SPEED = 3f;
 
 	public MonsterState currentState;
 	public Transform[] monsterWaypoint;
 	public int currentWaypoint = 0;
 	public TriggerCollider leftSight;
 	public TriggerCollider rightSight;
+	public delegate void GameOver();
+	public static event GameOver DoGameOver;
 	Player playerTarget;
 	Vector3 searchLocation;
 	Vector3 startPosition;
 	Vector3 playerLocation;
+	bool playerEntered=false;
 
 	void Start() {
 		monsterAnim = GetComponent<Animator> ();
@@ -180,8 +188,11 @@ public class Monster : MonoBehaviour {
 	}
 
 	void OnCollisionEnter2D(Collision2D other) {
-		if (other.gameObject.tag == "Player") {
+		if (other.gameObject.tag == "Player" && !playerEntered) {
 			Debug.Log ("Game Over");
+			playerEntered=true;
+			currentState = MonsterState.IDLE;
+			DoGameOver();
 		}
 	}
 
