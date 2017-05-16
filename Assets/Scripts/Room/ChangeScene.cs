@@ -33,9 +33,17 @@ public class ChangeScene : MonoBehaviour {
 		roomManager.ChangeScene(targetRoom,targetPortal);
 	}
 
+	public void EnterAbleChangeScene(RoomDataSO targetRoom, PortalType portalType){
+			this.targetRoom = targetRoom;
+			this.targetPortal = portalType;
+			fader.FadeOut ();
+
+			player.SetPause (true);
+	}
+
 	void OnTriggerEnter2D (Collider2D col)
 	{
-		if (col.tag == Tags.Portal.ToString () || col.tag == Tags.EnterAble.ToString()) {
+		if (col.tag == Tags.Portal.ToString ()) {
 			if (!isLoaded) {
 				//roomLoadController.AddRoom (roomName);
 				//Spawn();
@@ -46,7 +54,7 @@ public class ChangeScene : MonoBehaviour {
 
 				player.SetPause (true);
 			}
-		} 
+		}
 	}
 
 	void OnTriggerExit2D (Collider2D col)
