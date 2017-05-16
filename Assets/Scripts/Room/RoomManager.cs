@@ -21,6 +21,7 @@ public class RoomManager : MonoBehaviour {
 	}
 
 	void Init(){
+		Debug.Log((int)RoomNames.Room6);
 		currRoom = rooms[(int)RoomNames.Room6];
 		roomLoader.Load(currRoom.roomName);
 		LoadAdjacentRooms(currRoom);
@@ -78,9 +79,9 @@ public class RoomManager : MonoBehaviour {
 		if (currRoom.roomName == RoomNames.Room12) {
 			rooms[(int)RoomNames.Room7].stackPos=2;
 		}
-//		if (currRoom.roomName == RoomNames.Room2) {
-//			rooms[(int)RoomNames.Room11].stackPos=2;
-//		}
+		if (currRoom.roomName == RoomNames.Room2) {
+			rooms[(int)RoomNames.Room11].stackPos=2;
+		}
 	}
 
 	public void ChangeScene (RoomDataSO targetRoom,PortalType targetPortal)
