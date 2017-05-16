@@ -34,6 +34,7 @@ public class Player : MonoBehaviour {
 	public TriggerCollider lowerCrawlCollider;
 	public TriggerCollider lowerPlankCollider;
 	public TriggerCollider lowerClimbAbleCollider;
+	public TriggerCollider EnterAbleCollider;
 
 	public Joystick joystick;
 	public ActionButton actionButton;
@@ -53,7 +54,10 @@ public class Player : MonoBehaviour {
 	bool lowerCrawlFlag = false;
 	bool climbAbleFlag = false;
 	bool climbingFlag = false;
+	bool enterAbleFlag = false;
 	ClimbAble climbTrigger;
+	RoomDataSO enterAbleTargetRoom;
+	PortalType enterAblePortalType;
 
 	PlayerState playerAction = PlayerState.PLAYER_IDLE;
 
@@ -82,6 +86,8 @@ public class Player : MonoBehaviour {
 		lowerPlankCollider.OnTriggerExit += OnLowerPlankExit;
 		lowerClimbAbleCollider.OnTriggerEnter += OnClimbAbleEnter;
 		lowerClimbAbleCollider.OnTriggerExit += OnClimbAbleExit;
+		EnterAbleCollider.OnTriggerEnter += OnEnterAbleEnter;
+		EnterAbleCollider.OnTriggerExit += OnEnterAbleExit;
 	}
 
 	public JoystickDirection playerDir {
@@ -174,6 +180,14 @@ public class Player : MonoBehaviour {
 				} else {
 					playerRigidBody.constraints = RigidbodyConstraints2D.FreezeRotation;
 				}
+				//enterable
+				if(enterAbleFlag){
+					if(dir.vertical.y > 0f){
+						GetComponent<ChangeScene>().EnterAbleChangeScene(enterAbleTargetRoom, enterAblePortalType);
+						enterAbleFlag = false;
+					}
+				}
+
 			}
 		}
 	}
@@ -270,6 +284,16 @@ public class Player : MonoBehaviour {
 		climbAbleFlag = false;
 		climbTrigger = null;
 	}
+	void OnEnterAbleEnter(GameObject other)
+	{
+		enterAbleFlag = true;
+		enterAbleTargetRoom = other.GetComponent<Portal>().targetRoom;
+		enterAblePortalType = other.GetComponent<Portal>().portalType;
+	}
+	void OnEnterAbleExit(GameObject other)
+	{
+		enterAbleFlag = false;
+	}
 
 	void OnDestroy()
 	{
@@ -290,6 +314,8 @@ public class Player : MonoBehaviour {
 		actionButton.OnActionUp -= OnActionUp;
 		lowerClimbAbleCollider.OnTriggerEnter -= OnClimbAbleEnter;
 		lowerClimbAbleCollider.OnTriggerExit -= OnClimbAbleExit;
+		EnterAbleCollider.OnTriggerEnter -= OnEnterAbleEnter;
+		EnterAbleCollider.OnTriggerExit -= OnEnterAbleExit;
 	}
 
 	void AnimChange(PlayerState ps, float animSpeed = 1f)
@@ -322,8 +348,6 @@ public class Player : MonoBehaviour {
 			actionButton.Activate(PlayerState.PLAYER_CARRY,"CARRY");
 		}else if(other.tag == "SearchAble"){
 			actionButton.Activate(PlayerState.PLAYER_OPERATE,"SEARCH");
-		}else if(other.tag == "EnterAble"){
-			actionButton.Activate(PlayerState.PLAYER_IDLE,"ENTER");
 		}else if(other.tag == "NPC"){
 			actionButton.Activate(PlayerState.PLAYER_IDLE,"TALK");
 		}
@@ -332,7 +356,6 @@ public class Player : MonoBehaviour {
 		if (other.tag == "HideAble" ||
 			other.tag == "MoveAble" ||
 			other.tag == "SearchAble"||
-			other.tag == "EnterAble"||
 			other.tag == "NPC") {
 			actionButton.Deactivate();
 		}
