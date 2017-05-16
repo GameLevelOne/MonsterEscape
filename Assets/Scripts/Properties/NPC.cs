@@ -5,13 +5,12 @@ using UnityEngine;
 public class NPC : MonoBehaviour {
 	[Header("Ko Elwin")]
 	public string name;
-	public string[] message;
+	public string message;
 	public ItemSO item;
 	public bool triggerInteract;
 
 	[Header("Reference")]
 	public NPCTextMessage bubbleText;
-	public RectTransform canvas;
 
 	int counter = 0	;
 
@@ -30,15 +29,8 @@ public class NPC : MonoBehaviour {
 	}
 
 	public void Talk(){
-		GameObject tempBubbleText = Instantiate(bubbleText.gameObject) as GameObject;
-
-		tempBubbleText.GetComponent<RectTransform>().SetParent(canvas);
-		tempBubbleText.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
-		tempBubbleText.GetComponent<RectTransform>().localScale = Vector3.one;
-
-		tempBubbleText.GetComponent<NPCTextMessage>().Show(message[counter], name);
-
-		if(counter != message.Length-1) counter++;
+		bubbleText.Show(message,name);
+		GiveItem();
 	}
 
 	void GiveItem(){

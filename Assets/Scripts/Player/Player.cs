@@ -59,6 +59,7 @@ public class Player : MonoBehaviour {
 	ClimbAble climbTrigger;
 	RoomDataSO enterAbleTargetRoom;
 	PortalType enterAblePortalType;
+	GameObject objectToInteract;
 
 	PlayerState playerAction = PlayerState.PLAYER_IDLE;
 
@@ -195,6 +196,14 @@ public class Player : MonoBehaviour {
 
 	public void PlayerAction(PlayerState state)
 	{
+		if(objectToInteract.tag == "NPC"){
+			//talk
+		}else if(objectToInteract.tag == "SearchAble"){
+			//search
+		}else if(objectToInteract.tag == "NPCSearchAble"){
+			//talk (special case)
+		}
+
 		playerAction = state;
 	}
 		
@@ -354,6 +363,7 @@ public class Player : MonoBehaviour {
 		}else if (other.tag == "NPCSearchAble"){
 			actionButton.Activate(PlayerState.PLAYER_OPERATE,"SEARCH");
 		}
+		objectToInteract = other.gameObject;
 	}
 	void OnTriggerExit2D(Collider2D other) {
 		if (other.tag == "HideAble" ||
