@@ -7,26 +7,9 @@ public class NPC : MonoBehaviour {
 	public string name;
 	public string message;
 	public ItemSO item;
-	public bool triggerInteract;
 
 	[Header("Reference")]
 	public NPCTextMessage bubbleText;
-
-	int counter = 0	;
-
-	void OnTriggerEnter2D(Collider2D p){
-		if(p.tag == "Player"){
-			if(triggerInteract){
-				triggerInteract = false;
-				Interact();
-			}
-		}
-	}
-
-	public void Interact(){
-		Talk();
-		GiveItem();
-	}
 
 	public void Talk(){
 		bubbleText.Show(message,name);

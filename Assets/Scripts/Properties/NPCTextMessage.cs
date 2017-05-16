@@ -6,20 +6,27 @@ public class NPCTextMessage : MonoBehaviour {
 	public Text textName, textMessage;
 	public float typingSpeed;
 	string tempMessage;
+	Animator thisAnim;
 
 	void Awake(){
-		Hide();
+		thisAnim = GetComponent<Animator>();
+		ResetText();
+	}
+
+	void ResetText(){
+		textMessage.text = textName.text = string.Empty;
 	}
 
 	public void Show(string message, string name){
-		gameObject.SetActive(true);
 		tempMessage = message;
 		textName.text = name;
+		thisAnim.SetInteger("State",1);
 		StartCoroutine(Animate());
 	}
 
 	public void Hide(){
-		gameObject.SetActive(false);
+		ResetText();
+		thisAnim.SetInteger("State",0);
 		ChangeButtonMethod(SkipAnimation);
 	}
 
@@ -28,7 +35,6 @@ public class NPCTextMessage : MonoBehaviour {
 		textMessage.text = tempMessage;
 		ChangeButtonMethod(Hide);
 	}
-
 
 	IEnumerator Animate(){
 		WaitForSeconds delay = new WaitForSeconds(typingSpeed);
@@ -41,6 +47,7 @@ public class NPCTextMessage : MonoBehaviour {
 			textMessage.text += temp.ToString();
 			yield return delay;
 		}
+		ChangeButtonMethod(Hide);
 	}
 
 	void ChangeButtonMethod(UnityEngine.Events.UnityAction action){

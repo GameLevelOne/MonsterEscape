@@ -1,33 +1,28 @@
 ﻿using UnityEngine;
 
 public class SearchAbleInventory : Inventory {
-
-	[HideInInspector]
-	public SearchAble searchable;
+	Animator thisAnim;
 
 	void Start(){
-		InitInventory();
-	}
-
-	protected override void InitInventory(){
 		UpdateInventory();
+		thisAnim = GetComponent<Animator>();
 	}
 
 	public void SetItems(ItemSO[] item){
 		items = item;
 	}
 
-	public void ButtonXOnClick(){
-		Hide();
-	}
-
 	public void Show(){
 		UpdateInventory();
-		gameObject.SetActive(true);
+		thisAnim.SetInteger("State",1);
 	}
 
 	void Hide(){
-		gameObject.SetActive(false);
+		thisAnim.SetInteger("State",0);
+	}
+
+	public void ButtonXOnClick(){
+		Hide();
 	}
 
 	public void ButtonItemOnClick(int index){

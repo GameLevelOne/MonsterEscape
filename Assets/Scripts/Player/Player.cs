@@ -196,14 +196,6 @@ public class Player : MonoBehaviour {
 
 	public void PlayerAction(PlayerState state)
 	{
-		if(objectToInteract.tag == "NPC"){
-			//talk
-		}else if(objectToInteract.tag == "SearchAble"){
-			//search
-		}else if(objectToInteract.tag == "NPCSearchAble"){
-			//talk (special case)
-		}
-
 		playerAction = state;
 	}
 		
@@ -375,8 +367,14 @@ public class Player : MonoBehaviour {
 		}
 	}
 
-
 	void OnActionDown(PlayerState state) {
+		if(objectToInteract.tag == "NPC" || objectToInteract.tag == "NPCSearchAble"){
+			//talk
+			objectToInteract.GetComponent<NPC>().Talk();
+		}else if(objectToInteract.tag == "SearchAble"){
+			//search
+			objectToInteract.GetComponent<SearchAble>().Search();
+		}
 		PlayerAction (state);
 	}
 	void OnActionUp(PlayerState state) {
