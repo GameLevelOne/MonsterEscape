@@ -47,7 +47,9 @@ public class ChangeScene : MonoBehaviour {
 			if (!isLoaded) {
 				//roomLoadController.AddRoom (roomName);
 				//Spawn();
+//				print("OBJECT YG DITABRAK"+col.gameObject.name);
 				targetRoom = col.GetComponent<Portal> ().targetRoom;
+//				print("ChangeScene TargetRoom: "+col.GetComponent<Portal> ().targetRoom);
 				targetPortal = col.GetComponent<Portal> ().portalType;
 				fader.FadeOut ();
 				isLoaded = true;

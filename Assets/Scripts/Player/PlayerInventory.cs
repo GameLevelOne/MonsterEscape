@@ -2,14 +2,17 @@
 using UnityEngine;
 
 public class PlayerInventory : Inventory {
+	public Player player;
 	public Image highlight;
-
+	
 	const float startX = 50;
 	static float gapX = 100;
 
 	Animator anim;
+	GameObject tempItem;
 
 	int highlightCursor;
+	int animState;
 
 	void Start(){
 		InitInventory();
@@ -18,17 +21,20 @@ public class PlayerInventory : Inventory {
 	protected override void InitInventory(){
 		anim = GetComponent<Animator>();
 		DeselectItem();
-		UpdateInventory();
+		RefreshInventory();
 	}
 
-	public void Show(){ anim.SetBool("Show",true); }
-	public void Hide(){ anim.SetBool("Show",false); }
+	public void ButtonInventoryOnClick(){
+		if(animState == 1) animState = 0;
+		else if(animState == 0)animState = 1;
+		anim.SetInteger("State",animState);
+	}
 
 	public void SetItem(ItemSO item){
 		for(int i = 0;i<items.Length;i++){
-			if(items[i] != null){
+			if(items[i] == null){
 				items[i] = item;
-				UpdateInventory();
+				RefreshInventory();
 				return;
 			}
 		}
@@ -38,7 +44,7 @@ public class PlayerInventory : Inventory {
 	public override void RemoveItem(int index){
 		if(highlightCursor == index) DeselectItem();
 		items[index] = null;
-		UpdateInventory();
+		RefreshInventory();
 	}
 
 	//EVENT TRIGGER
@@ -55,9 +61,18 @@ public class PlayerInventory : Inventory {
 		highlightCursor = index;
 		highlight.GetComponent<RectTransform>().anchoredPosition = new Vector2(startX + (gapX * index),0);
 		highlight.enabled = true;
+
+		//item
+		player.HoldItem(items[index],index);
 	}
+
 	void DeselectItem(){
 		highlightCursor = -1;
 		if(highlight.enabled) highlight.enabled = false;
+
+		//item
+		Destroy(tempItem);
+		tempItem = null;
+		player.placeTrapButton.SetActive(false);
 	}
 }

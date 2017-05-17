@@ -9,7 +9,7 @@ public class Inventory : MonoBehaviour {
 
 	protected virtual void InitInventory(){}
 
-	protected void UpdateInventory(){
+	protected void RefreshInventory(){
 		for(int i = 0;i<items.Length;i++){
 			if(items[i] != null){
 				itemImages[i].enabled = true;

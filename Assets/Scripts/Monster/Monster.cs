@@ -9,7 +9,8 @@ public enum MonsterAnimState {
 	ATTACK, 
 	CONFUSED, 
 	DAMAGED,
-	SURPRISED
+	SURPRISED,
+	STUNNED
 }
 public enum MonsterState {	
 	IDLE, 
@@ -20,7 +21,8 @@ public enum MonsterState {
 	CHASE,
 	SEARCH,
 	NOTFOUND,
-	ATTACK
+	ATTACK,
+	STUNNED
 }
 
 public class Monster : MonoBehaviour {
@@ -125,6 +127,11 @@ public class Monster : MonoBehaviour {
 		currentState = MonsterState.NOTFOUND;
 		AnimChange (MonsterAnimState.CONFUSED,0.5f);
 		StartCoroutine (DelayToNextState(3f,MonsterState.RETURN));
+	}
+	public void GetStunned(){
+		currentState = MonsterState.STUNNED;
+		AnimChange(MonsterAnimState.STUNNED);
+		StartCoroutine (DelayToNextState(2f,MonsterState.RETURN));
 	}
 	IEnumerator DelayToNextState(float delay, MonsterState nextState) {
 		yield return new WaitForSeconds (delay);
