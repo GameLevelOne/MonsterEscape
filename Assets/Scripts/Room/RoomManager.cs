@@ -114,10 +114,7 @@ public class RoomManager : MonoBehaviour {
 			if (currRoom.adjacentRoomNames [i] != RoomNames.NULL)
 				rooms [(int)currRoom.adjacentRoomNames [i]].stackPos = 1;
 		}
-
-		if (currRoom.roomName == RoomNames.Room2) {
-			rooms[(int)RoomNames.Room11].stackPos=2;
-		}
+	
 	}
 
 	public void ChangeScene (RoomDataSO targetRoom,PortalType targetPortal)

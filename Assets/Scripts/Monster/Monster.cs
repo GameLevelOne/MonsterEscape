@@ -188,7 +188,8 @@ public class Monster : MonoBehaviour {
 	}
 
 	void OnCollisionEnter2D(Collision2D other) {
-		if (other.gameObject.tag == "Player" && !playerEntered) {
+		Debug.Log(other.gameObject.tag);
+		if (other.gameObject.tag == "MainChar" && !playerEntered) {
 			Debug.Log ("Game Over");
 			playerEntered=true;
 			currentState = MonsterState.IDLE;
