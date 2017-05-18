@@ -1,5 +1,6 @@
 ﻿using UnityEngine.UI;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class PlayerInventory : Inventory {
 	public Player player;
@@ -9,70 +10,74 @@ public class PlayerInventory : Inventory {
 	static float gapX = 100;
 
 	Animator anim;
-	GameObject tempItem;
 
 	int highlightCursor;
-	int animState;
+	bool animState = false;
 
-	void Start(){
-		InitInventory();
-	}
-
-	protected override void InitInventory(){
+	void Start()
+	{
 		anim = GetComponent<Animator>();
-		DeselectItem();
-		RefreshInventory();
 	}
 
-	public void ButtonInventoryOnClick(){
-		if(animState == 1) animState = 0;
-		else if(animState == 0)animState = 1;
-		anim.SetInteger("State",animState);
-	}
+	protected override void RefreshInventory()
+	{
+		for(int i = 0;i<MAX_PLAYER_ITEM_HOLD;i++) itemImages[i].sprite = null;
 
-	public void SetItem(ItemSO item){
-		for(int i = 0;i<items.Length;i++){
-			if(items[i] == null){
-				items[i] = item;
-				RefreshInventory();
-				return;
+		if(items.Count == 0) for(int i = 0;i<MAX_PLAYER_ITEM_HOLD;i++) itemImages[i].gameObject.GetComponent<Button>().interactable = false;
+		else{
+			for(int i = 0;i<items.Count;i++){
+				itemImages[i].sprite = items[i].itemData.itemSprite;
+				itemImages[i].GetComponent<Button>().interactable = true;
 			}
 		}
-		Debug.Log("FULL");
 	}
 
-	public override void RemoveItem(int index){
-		if(highlightCursor == index) DeselectItem();
-		items[index] = null;
-		RefreshInventory();
+	public void ButtonInventoryOnClick()
+	{
+		animState = !animState;
+		anim.SetInteger("State",animState ? 1 : 0);
 	}
 
-	//EVENT TRIGGER
-	public void ItemOnPointerClick(int index){
-		if(highlightCursor != index){
-			SelectItem(index);
-			highlightCursor = index;
-		}else{
-			DeselectItem();
+	public void Obtain(Items item)
+	{
+		if(items.Count >= MAX_PLAYER_ITEM_HOLD) Debug.Log("FULL");
+		else{
+			items.Add(item);
+			RefreshInventory();
 		}
 	}
 
-	void SelectItem(int index){
+	public void UseItem()
+	{
+		items.RemoveAt(highlightCursor);
+		UnHighlightItem();
+		RefreshInventory();
+	}
+
+	void HighlightItem(int index)
+	{
 		highlightCursor = index;
 		highlight.GetComponent<RectTransform>().anchoredPosition = new Vector2(startX + (gapX * index),0);
 		highlight.enabled = true;
 
-		//item
-		player.HoldItem(items[index],index);
+		player.HoldItem(items[index]);
 	}
 
-	void DeselectItem(){
-		highlightCursor = -1;
+	void UnHighlightItem()
+	{
 		if(highlight.enabled) highlight.enabled = false;
+		player.CancelHoldItem();
+	}
+		
 
-		//item
-		Destroy(tempItem);
-		tempItem = null;
-		player.placeTrapButton.SetActive(false);
+	//Button
+	public override void ButtonItemOnClick(int index)
+	{
+		if(highlightCursor != index){
+			highlightCursor = index;
+			HighlightItem(index);
+		}else{
+			UnHighlightItem();
+		}
 	}
 }

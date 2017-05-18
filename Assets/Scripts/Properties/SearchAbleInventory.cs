@@ -1,62 +1,52 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class SearchAbleInventory : Inventory {
-	Animator thisAnim;
-
 	public GameObject panelItem, panelItemEmpty;
 
+	Animator thisAnim;
 	PlayerInventory playerInventory;
 
 	void Start()
 	{
-		
 		thisAnim = GetComponent<Animator>();
 	}
 
-	public void Show(ItemSO[] items, PlayerInventory pi)
+	protected override void RefreshInventory()
 	{
-		playerInventory = pi;
-//		RefreshInventory();
-		if(items.Length == 0){
+		if(items.Count == 0){
+			for(int i = 0;i<itemImages.Length;i++) itemImages[i].sprite = null;
 			panelItemEmpty.SetActive(true);
 			panelItem.SetActive(false);
 		}else{
-			this.items = items;
-			RefreshInventory();
+			for(int i = 0;i<items.Count;i++) itemImages[i].sprite = items[i].itemData.itemSprite;
 			panelItemEmpty.SetActive(false);
 			panelItem.SetActive(true);
 		}
+	}
+
+	public void Show(List<Items> items, PlayerInventory pi)
+	{
+		playerInventory = pi;
+		this.items = items;
+		RefreshInventory();
 		thisAnim.SetInteger("State",1);
 	}
 
-//	bool hasItem(){
-//		for(int i = 0;i<items.Length;i++){
-//			print(items[i]);
-//			if(items[i] != null){
-//				return true;
-//			}
-//		}
-//		return false;
-//	}
-
-	void Hide()
+	public void Hide()
 	{
-//		for(int i = 0;i<this.items.Length;i++) items[i] = null;
 		thisAnim.SetInteger("State",0);
 	}
 
-	public void ButtonXOnClick()
+	public override void ButtonItemOnClick(int index)
 	{
-		Hide();
-		playerInventory.ButtonInventoryOnClick();
-	}
-
-	public void ButtonItemOnClick(int index)
-	{
-		if(items[index] != null){
-			playerInventory.SetItem(items[index]);
-			items[index] = null;
+		if(playerInventory.items.Count < MAX_PLAYER_ITEM_HOLD){
+			playerInventory.Obtain(items[index]);
+			items.RemoveAt(index);
 			RefreshInventory();
+		}else{
+			Debug.Log("Player Inventory FULL");
 		}
 	}
 }

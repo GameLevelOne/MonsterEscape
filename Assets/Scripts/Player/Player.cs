@@ -41,6 +41,7 @@ public class Player : MonoBehaviour {
 	public ActionButton actionButton;
 	public GameObject placeTrapButton;
 	public PlayerInventory playerInventory;
+	public SpriteRenderer itemHold;
 
 	public float speed = 10f;
 	float prevSpeed = 10f;
@@ -59,10 +60,13 @@ public class Player : MonoBehaviour {
 	bool climbingFlag = false;
 	bool enterAbleFlag = false;
 	public bool holdingItem = false;
+
 	ClimbAble climbTrigger;
 	RoomDataSO enterAbleTargetRoom;
 	PortalType enterAblePortalType;
 	GameObject objectToInteract;
+	Items item;
+	GameObject itemObj;
 
 	PlayerState playerAction = PlayerState.PLAYER_IDLE;
 
@@ -352,7 +356,6 @@ public class Player : MonoBehaviour {
 		}else if(other.tag == "MoveAble"){
 			actionButton.Activate(PlayerState.PLAYER_CARRY,"CARRY");
 		}else if(other.tag == "SearchAble"){
-			other.GetComponent<SearchAble>().playerInventory = this.playerInventory;
 			actionButton.Activate(PlayerState.PLAYER_OPERATE,"SEARCH");
 		}else if(other.tag == "NPC"){
 			actionButton.Activate(PlayerState.PLAYER_IDLE,"TALK");
@@ -367,34 +370,33 @@ public class Player : MonoBehaviour {
 			other.tag == "SearchAble"||
 			other.tag == "NPC"		||
 			other.tag == "NPCSearchAble") {
+
 			actionButton.Deactivate();
-			if(other.tag == "SearchAble"){
-				other.GetComponent<SearchAble>().playerInventory = null;
-			}
 		}
 	}
 
-	ItemSO item;
-	GameObject itemObj;
-	int itemIndex;
 
-	public void HoldItem(ItemSO item, int index){
-		if(itemObj != null) Destroy(itemObj);
-		itemObj = Instantiate(item.itemPrefab) as GameObject;
-		itemObj.transform.localScale = new Vector3(2f,2f,2f);
-		itemObj.transform.SetParent(transform);
-		itemObj.transform.localPosition = new Vector3(1f,4f,0f);
+
+	public void HoldItem(Items item){
+		this.item = item;
+
+		itemHold.sprite = this.item.itemData.itemSprite;
+		itemHold.enabled = true;
 		placeTrapButton.SetActive(true);
 	}
 
+	public void CancelHoldItem(){
+		this.item = null;
+		itemHold.enabled = false;
+		itemHold.sprite = null;
+		placeTrapButton.SetActive(false);
+	}
+
 	public void PlaceTrapButtonOnClick(){
-		if(itemObj.tag == "Trap"){
-			//place
-			playerInventory.RemoveItem(itemIndex);
-			itemObj.transform.localPosition = new Vector3(-4.5f,-0.3f,0f);
-			itemObj.transform.localScale = new Vector3(0.2f,0.2f,0.2f);
-			itemObj.transform.parent = null;
-		}
+		itemObj = Instantiate(item.itemData.itemPrefab);
+		itemObj.transform.position = new Vector3(transform.position.x,transform.position.y-0.3f,0f);
+
+		CancelHoldItem();
 	}
 
 	void OnActionDown(PlayerState state) {
@@ -403,7 +405,7 @@ public class Player : MonoBehaviour {
 			objectToInteract.GetComponent<NPC>().Talk();
 		}else if(objectToInteract.tag == "SearchAble"){
 			//search
-			objectToInteract.GetComponent<SearchAble>().Search();
+			objectToInteract.GetComponent<SearchAble>().Search(playerInventory);
 			if(playerInventory.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Show (1)") == false) playerInventory.ButtonInventoryOnClick();
 		}
 		PlayerAction (state);

@@ -1,18 +1,14 @@
-﻿using UnityEngine.UI;
-using UnityEngine;
+﻿using UnityEngine;
+using System.Collections.Generic;
 
 public class SearchAble : Properties {
+	[Header("Dynamic Reference")]
+	public List<Items> items = new List<Items>();
 
-	[Header("Ko Elwin")]
-	public ItemSO[] items = new ItemSO[5];
-
-	[Header("Reference")]
+	[Header("Absolute Reference")]
 	public SearchAbleInventory searchAbleInventory;
-	public PlayerInventory playerInventory;
-	Animator thisAnim;
 		
-	public void Search(){
-		searchAbleInventory.Show(items, playerInventory);
+	public void Search(PlayerInventory pi){
+		searchAbleInventory.Show(items, pi);
 	}
-
 }
