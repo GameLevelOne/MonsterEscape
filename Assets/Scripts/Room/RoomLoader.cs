@@ -4,12 +4,13 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class RoomLoader : MonoBehaviour {
-	public Rigidbody2D playerRB;
+	public GameObject playerObj;
 
 	private bool readyToChangeScene = false;
 
 	public void Load (RoomNames roomName){
-		playerRB.isKinematic=true;
+		playerObj.GetComponent<Rigidbody2D>().isKinematic=true;
+		playerObj.SetActive(false);
 		SceneManager.sceneLoaded += SceneManager_sceneLoaded;
 		//SceneManager.LoadSceneAsync(roomName,LoadSceneMode.Single);
 		SceneManager.LoadSceneAsync (roomName.ToString(), LoadSceneMode.Additive);
@@ -35,7 +36,8 @@ public class RoomLoader : MonoBehaviour {
 		while (scene.isLoaded == false) {
 			yield return new WaitForEndOfFrame();
 		}
-		playerRB.isKinematic=false;
+		playerObj.GetComponent<Rigidbody2D>().isKinematic=false;
+		playerObj.SetActive(true);
 	}
 
 }
