@@ -15,8 +15,8 @@ public class SearchAbleInventory : Inventory {
 
 	protected override void RefreshInventory()
 	{
+		for(int i = 0;i<itemImages.Length;i++) itemImages[i].sprite = null;
 		if(items.Count == 0){
-			for(int i = 0;i<itemImages.Length;i++) itemImages[i].sprite = null;
 			panelItemEmpty.SetActive(true);
 			panelItem.SetActive(false);
 		}else{
@@ -43,7 +43,6 @@ public class SearchAbleInventory : Inventory {
 	{
 		if(playerInventory.items.Count < MAX_PLAYER_ITEM_HOLD){
 			playerInventory.Obtain(items[index]);
-			Destroy(items[index].gameObject);
 			items.RemoveAt(index);
 			RefreshInventory();
 		}else{

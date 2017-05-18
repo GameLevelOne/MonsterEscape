@@ -22,7 +22,7 @@ public class StairsChecker : MonoBehaviour {
 				|| ((goingUp) && (player.playerDir.IsUp))) {
 				enableVertical = true;
 			}
-			Debug.Log ("Condition: "+enableHorizontal+","+enableVertical);
+//			Debug.Log ("Condition: "+enableHorizontal+","+enableVertical);
 			if (enableHorizontal && enableVertical) {
 				stairsBody.ActivateStairs(true,player.lowerPlayerCollider);
 			} else {
