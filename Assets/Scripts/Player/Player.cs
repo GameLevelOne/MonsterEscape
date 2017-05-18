@@ -392,9 +392,13 @@ public class Player : MonoBehaviour {
 		placeTrapButton.SetActive(false);
 	}
 
-	public void PlaceTrapButtonOnClick(){
-		itemObj = Instantiate(item.itemData.itemPrefab);
-		itemObj.transform.position = new Vector3(transform.position.x,transform.position.y-0.3f,0f);
+	public void UseItem(){
+		if(item.itemData.itemType == ItemType.TRAP){
+			itemObj = Instantiate(item.itemData.itemPrefab);
+			itemObj.transform.position = new Vector3(transform.position.x,transform.position.y-0.3f,0f);
+		}else if(item.itemData.itemType == ItemType.FOOD){
+			//eat
+		}
 
 		CancelHoldItem();
 	}

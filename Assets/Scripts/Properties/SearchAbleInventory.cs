@@ -43,6 +43,7 @@ public class SearchAbleInventory : Inventory {
 	{
 		if(playerInventory.items.Count < MAX_PLAYER_ITEM_HOLD){
 			playerInventory.Obtain(items[index]);
+			Destroy(items[index].gameObject);
 			items.RemoveAt(index);
 			RefreshInventory();
 		}else{
