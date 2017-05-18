@@ -3,34 +3,60 @@
 public class SearchAbleInventory : Inventory {
 	Animator thisAnim;
 
-	void Start(){
-		UpdateInventory();
+	public GameObject panelItem, panelItemEmpty;
+
+	PlayerInventory playerInventory;
+
+	void Start()
+	{
+		
 		thisAnim = GetComponent<Animator>();
 	}
 
-	public void SetItems(ItemSO[] item){
-		items = item;
-	}
-
-	public void Show(){
-		UpdateInventory();
+	public void Show(ItemSO[] items, PlayerInventory pi)
+	{
+		playerInventory = pi;
+//		RefreshInventory();
+		if(items.Length == 0){
+			panelItemEmpty.SetActive(true);
+			panelItem.SetActive(false);
+		}else{
+			this.items = items;
+			RefreshInventory();
+			panelItemEmpty.SetActive(false);
+			panelItem.SetActive(true);
+		}
 		thisAnim.SetInteger("State",1);
 	}
 
-	void Hide(){
+//	bool hasItem(){
+//		for(int i = 0;i<items.Length;i++){
+//			print(items[i]);
+//			if(items[i] != null){
+//				return true;
+//			}
+//		}
+//		return false;
+//	}
+
+	void Hide()
+	{
+//		for(int i = 0;i<this.items.Length;i++) items[i] = null;
 		thisAnim.SetInteger("State",0);
 	}
 
-	public void ButtonXOnClick(){
+	public void ButtonXOnClick()
+	{
 		Hide();
+		playerInventory.ButtonInventoryOnClick();
 	}
 
-	public void ButtonItemOnClick(int index){
+	public void ButtonItemOnClick(int index)
+	{
 		if(items[index] != null){
-			//take the item selected and move it to player inventory
-			//empty the slot
+			playerInventory.SetItem(items[index]);
 			items[index] = null;
-			UpdateInventory();
+			RefreshInventory();
 		}
 	}
 }

@@ -14,7 +14,7 @@ public class Stairs : MonoBehaviour {
 
 	public void ActivateStairs (bool active, Collider2D playerCollider) {
 		for (int i=0;i<disableOtherObjects.Length;i++) {
-			Debug.Log("Activate Stairs: "+active+", collider: "+playerCollider.name);
+//			Debug.Log("Activate Stairs: "+active+", collider: "+playerCollider.name);
 			Physics2D.IgnoreCollision(playerCollider, disableOtherObjects[i],active);
 		}
 		thisCollider.enabled = active;

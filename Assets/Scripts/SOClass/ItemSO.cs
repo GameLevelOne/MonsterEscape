@@ -9,4 +9,6 @@ public class ItemSO : ScriptableObject {
 	public string itemName = "NewItem";
 	public Sprite itemSprite = null;
 	public ItemType itemType;
+	public GameObject itemPrefab;
+	public Sprite[] itemEffects;
 }
