@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class RoomManager : MonoBehaviour {
 	public RoomDataSO[] rooms;
@@ -11,6 +12,7 @@ public class RoomManager : MonoBehaviour {
 	public GameObject textGameOver;
 	public GameObject btnRestart;
 	public Fader fader;
+	public bool gameOver=false;
 
 	private RoomDataSO currRoom;
 	private float xPos = 0f;
@@ -32,6 +34,7 @@ public class RoomManager : MonoBehaviour {
 	}
 
 	void Init(){
+		playerObj.GetComponent<Rigidbody2D>().isKinematic=true;
 		playerObj.transform.localPosition = playerInitPos;
 		currRoom = rooms[(int)RoomNames.Room6];
 		roomLoader.Load(currRoom.roomName);
@@ -48,12 +51,19 @@ public class RoomManager : MonoBehaviour {
 	}
 
 	void StartFadeOutGameOver (){
+		gameOver=true;
 		fader.FadeOutGameOver();
 	}
 
-	void AfterFadeOutGameOver(){
-		textGameOver.SetActive(true);
-		btnRestart.SetActive(true);
+	void AfterFadeOutGameOver ()
+	{
+		if (gameOver) {
+			textGameOver.GetComponent<Text>().text = "GAME OVER";
+		} else { //end stage
+			textGameOver.GetComponent<Text>().text = "STAGE CLEARED";
+		}
+		textGameOver.SetActive (true);
+		btnRestart.SetActive (true);
 		playerObj.GetComponent<Player> ().SetPause (true);
 	}
 
@@ -143,4 +153,5 @@ public class RoomManager : MonoBehaviour {
 //		Debug.Log ("halooo");
 		fader.FadeIn();
 	}
+
 }

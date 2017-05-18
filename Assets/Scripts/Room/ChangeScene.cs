@@ -48,10 +48,16 @@ public class ChangeScene : MonoBehaviour {
 				//roomLoadController.AddRoom (roomName);
 				//Spawn();
 //				print("OBJECT YG DITABRAK"+col.gameObject.name);
-				targetRoom = col.GetComponent<Portal> ().targetRoom;
-//				print("ChangeScene TargetRoom: "+col.GetComponent<Portal> ().targetRoom);
-				targetPortal = col.GetComponent<Portal> ().portalType;
-				fader.FadeOut ();
+				Portal portalData = col.GetComponent<Portal> ();
+				if (portalData.targetRoom != null) {
+					targetRoom = col.GetComponent<Portal> ().targetRoom;
+//					print("ChangeScene TargetRoom: "+col.GetComponent<Portal> ().targetRoom);
+					targetPortal = col.GetComponent<Portal> ().portalType;
+					fader.FadeOut ();
+				} else { //end stage
+					roomManager.gameOver=false;
+					fader.FadeOutGameOver();
+				}
 				isLoaded = true;
 
 				player.SetPause (true);
