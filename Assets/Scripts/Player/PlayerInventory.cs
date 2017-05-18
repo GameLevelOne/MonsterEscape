@@ -11,7 +11,7 @@ public class PlayerInventory : Inventory {
 
 	Animator anim;
 
-	int highlightCursor;
+	int highlightCursor = -1;
 	bool animState = false;
 
 	void Start()
@@ -42,6 +42,7 @@ public class PlayerInventory : Inventory {
 	{
 		if(items.Count >= MAX_PLAYER_ITEM_HOLD) Debug.Log("FULL");
 		else{
+			item.transform.SetParent(player.ItemsToHoldObject.transform,false);
 			items.Add(item);
 			RefreshInventory();
 		}
@@ -54,28 +55,30 @@ public class PlayerInventory : Inventory {
 		RefreshInventory();
 	}
 
-	void HighlightItem(int index)
+	void HighlightItem()
 	{
-		highlightCursor = index;
-		highlight.GetComponent<RectTransform>().anchoredPosition = new Vector2(startX + (gapX * index),0);
+		print("ASDASDSA");
+		highlight.GetComponent<RectTransform>().anchoredPosition = new Vector2(startX + (gapX * highlightCursor),0);
 		highlight.enabled = true;
 
-		player.HoldItem(items[index]);
+		player.HoldItem(items[highlightCursor]);
 	}
 
 	void UnHighlightItem()
 	{
 		if(highlight.enabled) highlight.enabled = false;
 		player.CancelHoldItem();
+		highlightCursor = -1;
 	}
 		
 
 	//Button
 	public override void ButtonItemOnClick(int index)
 	{
+		print(index);
 		if(highlightCursor != index){
 			highlightCursor = index;
-			HighlightItem(index);
+			HighlightItem();
 		}else{
 			UnHighlightItem();
 		}

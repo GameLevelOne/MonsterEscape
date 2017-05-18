@@ -6,7 +6,7 @@ using UnityEngine.EventSystems;
 
 public enum PlayerState {
 	PLAYER_IDLE,
-	PLAYER_WALK,
+	PLAYER_RUN,
 	PLAYER_FALL,
 	PLAYER_CLIMB,
 	PLAYER_CRAWL,
@@ -17,6 +17,7 @@ public enum PlayerState {
 	PLAYER_DAMAGE,
 	PLAYER_PLANKFALL,
 	PLAYER_CLIMBPLATFORM,
+	PLAYER_WALK
 }
 
 
@@ -42,6 +43,7 @@ public class Player : MonoBehaviour {
 	public GameObject placeTrapButton;
 	public PlayerInventory playerInventory;
 	public SpriteRenderer itemHold;
+	public GameObject ItemsToHoldObject;
 
 	public float speed = 10f;
 	float prevSpeed = 10f;
@@ -131,10 +133,14 @@ public class Player : MonoBehaviour {
 							if ((onPlankFlag) && (Mathf.Abs (dir.horizontal.x) >= plankThreshold)) {
 								plankFallFlag = true;
 							} else {
-								AnimChange (PlayerState.PLAYER_WALK, 0.5f + (Mathf.Abs (dir.horizontal.x) / 2));	
+								if(Mathf.Abs (dir.horizontal.x) < plankThreshold) 
+									AnimChange (PlayerState.PLAYER_WALK, 0.5f + (Mathf.Abs (dir.horizontal.x) / 2));	
+								else
+									AnimChange (PlayerState.PLAYER_RUN, 0.5f + (Mathf.Abs (dir.horizontal.x) / 2));	
 							}
 						}						
 					}
+
 					if ((!fallFlag) || (!ladderFlag)) {
 						playerTransform.localPosition = curPos + (dir.horizontal * speed * Time.deltaTime);
 					}
@@ -396,6 +402,7 @@ public class Player : MonoBehaviour {
 		if(item.itemData.itemType == ItemType.TRAP){
 			itemObj = Instantiate(item.itemData.itemPrefab);
 			itemObj.transform.position = new Vector3(transform.position.x,transform.position.y-0.3f,0f);
+			playerInventory.UseItem();
 		}else if(item.itemData.itemType == ItemType.FOOD){
 			//eat
 		}
