@@ -32,6 +32,7 @@ public class RoomManager : MonoBehaviour {
 	}
 
 	void Init(){
+		playerObj.GetComponent<Rigidbody2D>().isKinematic=true;
 		playerObj.transform.localPosition = playerInitPos;
 		currRoom = rooms[(int)RoomNames.Room6];
 		roomLoader.Load(currRoom.roomName);
@@ -143,4 +144,5 @@ public class RoomManager : MonoBehaviour {
 //		Debug.Log ("halooo");
 		fader.FadeIn();
 	}
+
 }
